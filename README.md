@@ -11,6 +11,9 @@ backend (free) for tracking registrations and exporting payments.
 - Open / close registration switch
 - **Auto-confirmation email** sent to each buyer on submit
 - Every registration logged to a Google Sheet → one-click export
+- **Password-protected admin dashboard** (`admin.html`) to review payments,
+  open each proof of payment, mark Confirmed/Rejected, and see live
+  revenue + seat totals
 - All key settings editable in the Sheet, no code changes needed
 
 ---
@@ -21,6 +24,8 @@ backend (free) for tracking registrations and exporting payments.
 1. Create a new **Google Sheet**.
 2. **Extensions → Apps Script**. Delete the sample code.
 3. Paste in everything from `google-apps-script.gs`. **Save**.
+   Then change `ADMIN_KEY = "CHANGE-THIS-PASSWORD"` near the top to your
+   own secret password (this is your admin dashboard login).
 4. Pick the `setup` function in the toolbar and click **Run** once
    (authorize when prompted). This builds 3 tabs: **Config**, **Tiers**,
    **Registrations**.
@@ -36,7 +41,8 @@ confirm the GCash/BDO/BPI account names, and your exact Facebook/Instagram URLs.
 
 ### Step 3 — Publish on GitHub Pages
 1. Create a new repository on GitHub named **`sod-recital-2026`**.
-2. Upload all files (`index.html`, `styles.css`, `app.js`, `config.js`, `logo.svg`).
+2. Upload all files (`index.html`, `admin.html`, `styles.css`, `app.js`,
+   `admin.js`, `config.js`, `logo.svg`).
 3. Repo **Settings → Pages → Source: `main` branch / root → Save**.
 4. Your site goes live at `https://krvn031992.github.io/sod-recital-2026/`.
 
@@ -52,9 +58,22 @@ Open your Google Sheet:
   column to `Confirmed`, `Pending`, `Rejected`, or `Cancelled`.
   Rejected/Cancelled rows free their seats back up automatically.
 
+## Admin dashboard (check & track payments)
+Go to `https://krvn031992.github.io/sod-recital-2026/admin.html` and log in
+with your `ADMIN_KEY` password. From there you can:
+- See live totals — orders, confirmed vs pending revenue, seats sold per tier
+- Search/filter every registration
+- Open each buyer's **proof of payment**
+- Change a status to **Confirmed / Rejected / Cancelled** (writes back to the
+  Sheet; Rejected/Cancelled free the seats again)
+- **Export CSV** of all payments with one click
+
+The admin page is not linked from the public site and is password-gated,
+but treat the URL as semi-private and keep your `ADMIN_KEY` strong.
+
 ## Exporting payments
-In the Sheet: **File → Download → Microsoft Excel (.xlsx)** or **CSV**.
-That's your full payment/registration export.
+From the **admin dashboard**: click **Export CSV**.
+Or from the Sheet: **File → Download → Microsoft Excel (.xlsx)** or **CSV**.
 
 ## Preview locally
 With `apiUrl` left blank, the site runs in **preview mode** using the

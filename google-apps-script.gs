@@ -23,6 +23,10 @@
 var SHEETS = { CONFIG: "Config", TIERS: "Tiers", REG: "Registrations" };
 var RECEIPTS_FOLDER = "Recital Receipts";
 
+/* IMPORTANT: change this to your own secret password before deploying.
+   You'll type the same password to log into the admin dashboard.        */
+var ADMIN_KEY = "CHANGE-THIS-PASSWORD";
+
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -68,10 +72,54 @@ function sheet_(ss, name, headers) {
 function doGet(e) {
   try {
     setup(); // ensure tabs exist
+    var action = (e && e.parameter && e.parameter.action) || "config";
+    if (action === "admin") {
+      if (!e.parameter || e.parameter.key !== ADMIN_KEY) {
+        return json_({ ok: false, error: "Unauthorized" });
+      }
+      return json_(adminData_());
+    }
     return json_(readConfig_());
   } catch (err) {
     return json_({ ok: false, error: String(err) });
   }
+}
+
+/* ---------- Admin: full registration list + summary ---------- */
+function adminData_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var values = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
+  var rows = [];
+  for (var i = 1; i < values.length; i++) {
+    var r = values[i];
+    if (!r[0]) continue;
+    rows.push({
+      orderId: r[0], timestamp: r[1], studentName: r[2], studentClass: r[3],
+      buyerName: r[4], email: r[5], phone: r[6], tier: r[7], qty: Number(r[8]),
+      unitPrice: Number(r[9]), total: Number(r[10]), payMethod: r[11],
+      reference: r[12], receipt: r[13], status: r[14] || "Pending"
+    });
+  }
+  var cfg = readConfig_();
+  var summary = {
+    totalOrders: rows.length,
+    byStatus: { Pending: 0, Confirmed: 0, Rejected: 0, Cancelled: 0 },
+    revenueConfirmed: 0,
+    revenuePending: 0,
+    soldByTier: {},
+    remaining: cfg.remaining,
+    tiers: cfg.tiers,
+    capacity: cfg.totalCapacity
+  };
+  rows.forEach(function (o) {
+    var st = o.status || "Pending";
+    summary.byStatus[st] = (summary.byStatus[st] || 0) + 1;
+    if (st === "Confirmed") summary.revenueConfirmed += o.total;
+    if (st === "Pending")   summary.revenuePending += o.total;
+    if (st !== "Rejected" && st !== "Cancelled")
+      summary.soldByTier[o.tier] = (summary.soldByTier[o.tier] || 0) + o.qty;
+  });
+  return { ok: true, rows: rows, summary: summary };
 }
 
 function readConfig_() {
@@ -129,6 +177,12 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     setup();
 
+    // Admin action: update a registration's status
+    if (data.type === "updateStatus") {
+      if (data.key !== ADMIN_KEY) return json_({ ok: false, error: "Unauthorized" });
+      return json_(updateStatus_(ss, data.orderId, data.status));
+    }
+
     // Re-check sales open + capacity server-side (don't trust the client)
     var cfg = readConfig_();
     if (!cfg.salesOpen) return json_({ ok: false, error: "Registration is closed." });
@@ -161,6 +215,20 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+function updateStatus_(ss, orderId, status) {
+  var allowed = ["Pending", "Confirmed", "Rejected", "Cancelled"];
+  if (allowed.indexOf(status) === -1) return { ok: false, error: "Invalid status." };
+  var sh = ss.getSheetByName(SHEETS.REG);
+  var ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
+  for (var i = 1; i < ids.length; i++) {
+    if (String(ids[i][0]) === String(orderId)) {
+      sh.getRange(i + 1, 15).setValue(status); // column 15 = Status
+      return { ok: true, orderId: orderId, status: status };
+    }
+  }
+  return { ok: false, error: "Order not found." };
 }
 
 function saveReceipt_(orderId, data) {

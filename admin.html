@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Admin · Payments</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <div class="brand">
+        <img class="brand__logo" src="logo.svg" alt="State of Dance logo" />
+        <span class="brand__name">Admin · Payments</span>
+      </div>
+      <button class="btn btn--ghost btn--sm" data-logout hidden>Log out</button>
+    </div>
+  </header>
+
+  <!-- Login -->
+  <section class="section" data-login>
+    <div class="wrap wrap--narrow">
+      <h2 class="section__title">Admin Access</h2>
+      <p class="section__sub">Enter your admin password to view and manage payments.</p>
+      <form class="card form" data-login-form>
+        <label class="field">
+          <span>Admin Password</span>
+          <input type="password" name="key" autocomplete="current-password" required />
+        </label>
+        <button class="btn btn--gold btn--block" type="submit">Enter Dashboard</button>
+        <p class="form__msg" data-login-msg role="status"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dashboard -->
+  <section class="section section--alt" data-dash hidden>
+    <div class="wrap">
+      <div class="admin__bar">
+        <h2 class="section__title" style="text-align:left;margin:0;">Payments</h2>
+        <div class="admin__actions">
+          <button class="btn btn--ghost btn--sm" data-refresh>↻ Refresh</button>
+          <button class="btn btn--gold btn--sm" data-export>⬇ Export CSV</button>
+        </div>
+      </div>
+
+      <div class="cards" data-cards></div>
+
+      <div class="admin__filters">
+        <input class="admin__search" type="search" placeholder="Search name, email, reference, order ID…" data-search />
+        <select class="admin__filter" data-filter>
+          <option value="">All statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table class="tbl" data-table>
+          <thead>
+            <tr>
+              <th>Order ID</th><th>Date</th><th>Student</th><th>Buyer</th>
+              <th>Contact</th><th>Tier</th><th>Qty</th><th>Total</th>
+              <th>Pay</th><th>Reference</th><th>Proof</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody data-rows></tbody>
+        </table>
+      </div>
+      <p class="admin__empty" data-empty hidden>No registrations match.</p>
+    </div>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

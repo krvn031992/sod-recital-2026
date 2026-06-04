@@ -215,4 +215,42 @@ a { color: inherit; }
 .modal__note { font-size: .88rem; }
 .modal__card .btn { margin-top: 1.4rem; }
 
+/* ---- Admin dashboard ---- */
+.admin__bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.admin__actions { display: flex; gap: .6rem; }
+.admin__notice { background: rgba(203,161,78,.15); border: 1px solid var(--gold-500); color: var(--purple-900); padding: .7rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: .9rem; font-weight: 500; }
+
+.cards { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); margin-bottom: 1.6rem; }
+.card-stat { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1.1rem 1.2rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: .35rem; }
+.card-stat--wide { grid-column: span 2; }
+@media (max-width: 560px){ .card-stat--wide { grid-column: 1 / -1; } }
+.card-stat__label { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); font-weight: 600; }
+.card-stat__val { font-size: 1.6rem; font-weight: 700; font-family: "Playfair Display", serif; color: var(--purple-900); }
+.card-stat.is-ok .card-stat__val { color: var(--ok); }
+.card-stat.is-warn .card-stat__val { color: var(--gold-600); }
+.seats { display: flex; flex-direction: column; gap: .25rem; }
+.seatline { display: flex; justify-content: space-between; font-size: .92rem; }
+.seatline b { color: var(--purple-700); }
+
+.admin__filters { display: flex; gap: .8rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.admin__search { flex: 1; min-width: 220px; font: inherit; padding: .7rem .9rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+.admin__filter { font: inherit; padding: .7rem .9rem; border: 1.5px solid var(--line); border-radius: var(--radius-sm); background: #fff; }
+.admin__search:focus, .admin__filter:focus { outline: none; border-color: var(--purple-600); box-shadow: 0 0 0 3px rgba(107,70,193,.15); }
+
+.table-wrap { overflow-x: auto; border-radius: var(--radius-sm); border: 1px solid var(--line); background: #fff; }
+.tbl { width: 100%; border-collapse: collapse; font-size: .88rem; min-width: 920px; }
+.tbl th { text-align: left; background: var(--purple-900); color: #fff; padding: .7rem .8rem; font-weight: 600; white-space: nowrap; position: sticky; top: 0; }
+.tbl td { padding: .65rem .8rem; border-top: 1px solid var(--line); vertical-align: top; }
+.tbl tr:hover td { background: #faf7f0; }
+.tbl small { color: var(--ink-soft); }
+.tbl .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .82rem; }
+.tbl a { color: var(--purple-700); }
+
+.status { font: inherit; font-weight: 600; padding: .35rem .5rem; border-radius: 999px; border: 1.5px solid var(--line); cursor: pointer; }
+.status--pending   { background: #fff7e6; color: #9a6b00; border-color: #e9cf95; }
+.status--confirmed { background: #e7f6ed; color: #1f7a47; border-color: #a8d9bd; }
+.status--rejected  { background: #fdecea; color: #b23121; border-color: #f0bcb4; }
+.status--cancelled { background: #eee; color: #666; border-color: #ccc; }
+.admin__empty { text-align: center; color: var(--ink-soft); padding: 2rem; }
+
 [hidden] { display: none !important; }
