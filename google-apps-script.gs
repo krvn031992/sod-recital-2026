@@ -154,6 +154,7 @@ function doPost(e) {
       tier.price * qty, data.payMethod, data.reference, receiptLink, "Pending"
     ]);
 
+    sendConfirmation_(cfg, data, tier, qty, orderId);
     return json_({ ok: true, orderId: orderId });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -170,6 +171,33 @@ function saveReceipt_(orderId, data) {
     orderId + "_" + (data.receiptName || "receipt"));
   var file = folder.createFile(blob);
   return file.getUrl();
+}
+
+/* ---------- Auto-confirmation email to the buyer ---------- */
+function sendConfirmation_(cfg, data, tier, qty, orderId) {
+  if (!data.email) return;
+  try {
+    var peso = "₱";
+    var total = (tier.price * qty).toLocaleString();
+    var subject = "Registration received — " + (cfg.eventName || "Recital") + " (" + orderId + ")";
+    var body =
+      "Hi " + (data.buyerName || "there") + ",\n\n" +
+      "We've received your registration for " + (cfg.eventName || "the recital") + ".\n" +
+      "Reference No: " + orderId + "\n\n" +
+      "  Student: " + data.studentName + "\n" +
+      "  Ticket:  " + qty + " x " + tier.name + "\n" +
+      "  Total:   " + peso + total + "\n" +
+      "  Payment: " + String(data.payMethod).toUpperCase() + " · Ref " + data.reference + "\n\n" +
+      "Status: PENDING VERIFICATION. We'll review your proof of payment and " +
+      "confirm your seat(s) in a follow-up message. VIP seat assignments are sent upon confirmation.\n\n" +
+      (cfg.eventDate ? "Show date: " + cfg.eventDate + "\n" : "") +
+      (cfg.venue ? "Venue: " + cfg.venue + "\n\n" : "\n") +
+      "Please keep this email and your receipt.\n\n" +
+      "— State of Dance Studio";
+    MailApp.sendEmail({ to: data.email, subject: subject, body: body, name: "State of Dance Studio" });
+  } catch (err) {
+    // Email failure must not block the registration; it's already saved.
+  }
 }
 
 function makeOrderId_() {

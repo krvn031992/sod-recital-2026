@@ -188,12 +188,23 @@ a { color: inherit; }
 .form__msg.is-err { color: var(--err); }
 .form__msg.is-ok { color: var(--ok); }
 
+/* ---- Policy ---- */
+.policy { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(1.4rem, 3vw, 2.2rem); box-shadow: var(--shadow-sm); }
+.policy h3 { color: var(--purple-800); font-size: 1.2rem; margin: 1.4rem 0 .6rem; }
+.policy h3:first-child { margin-top: 0; }
+.policy ul { margin: 0; padding-left: 1.2rem; color: var(--ink-soft); }
+.policy li { margin: .45rem 0; }
+.policy strong { color: var(--ink); }
+
 /* ---- Footer ---- */
 .footer { background: var(--purple-950); color: var(--purple-300); padding: 2.5rem 0; margin-top: 2rem; }
 .footer__inner { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .footer__org { color: #fff; font-weight: 600; margin: 0; }
 .footer__line { margin: .2rem 0 0; font-size: .9rem; }
+.footer__contact { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.footer__contact-label { color: var(--purple-300); font-size: .9rem; }
 .footer__contact a { color: var(--gold-400); text-decoration: none; font-weight: 600; }
+.footer__contact a:hover { color: var(--gold-200); }
 
 /* ---- Modal ---- */
 .modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; background: rgba(29,15,51,.6); backdrop-filter: blur(4px); padding: 1rem; }

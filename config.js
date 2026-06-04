@@ -49,12 +49,14 @@ window.SOD_CONFIG = {
 
   /* ---- Payment accounts (manual transfer) (TODO) ---- */
   payments: {
-    gcash: { name: "State of Dance Studio", number: "0906 099 4503" },     // TODO: confirm GCash registered name
-    bdo:   { bank: "BDO", name: "State of Dance Studio", number: "0023 8027 6338" }, // TODO: confirm account name
-    bpi:   { bank: "BPI", name: "State of Dance Studio", number: "3119 2606 84" }    // TODO: confirm account name
+    gcash: { name: "Kervin Will E. Mendiola", number: "0906 099 4503" },
+    bdo:   { bank: "BDO", name: "Kervin Will E. Mendiola", number: "0023 8027 6338" },
+    bpi:   { bank: "BPI", name: "Kervin Will E. Mendiola", number: "3119 2606 84" }
   },
 
-  /* ---- Contact ---- */
-  contactEmail: "TODO: you@email.com",
-  contactPhone: ""
+  /* ---- Contact (social media) ---- */
+  socials: {
+    facebook:  "https://www.facebook.com/stateofdancestudio",   // TODO: confirm exact page URL
+    instagram: "https://www.instagram.com/stateofdancestudio"   // TODO: confirm exact handle
+  }
 };

@@ -7,8 +7,9 @@ backend (free) for tracking registrations and exporting payments.
 ## What it does
 - VIP & General Admission tiers (prices, entry times, seat counts)
 - Per-student ticket limit (default 4) — editable
-- Manual payment via **GCash, BDO, BPI** with reference no. + receipt upload
+- Manual payment via **GCash, BDO, BPI** with reference no. + **required proof-of-payment upload**
 - Open / close registration switch
+- **Auto-confirmation email** sent to each buyer on submit
 - Every registration logged to a Google Sheet → one-click export
 - All key settings editable in the Sheet, no code changes needed
 
@@ -30,14 +31,14 @@ backend (free) for tracking registrations and exporting payments.
 6. Open `config.js` and paste that URL into `apiUrl: ""`.
 
 ### Step 2 — Fill in your details
-Edit `config.js` and replace every `TODO`:
-event name/date/venue, GCash/BDO/BPI account names & numbers, contact email.
+Edit `config.js` and replace any remaining `TODO`:
+confirm the GCash/BDO/BPI account names, and your exact Facebook/Instagram URLs.
 
 ### Step 3 — Publish on GitHub Pages
-1. Create a new repository on GitHub (e.g. `recital-tickets`).
-2. Upload these files (`index.html`, `styles.css`, `app.js`, `config.js`).
+1. Create a new repository on GitHub named **`sod-recital-2026`**.
+2. Upload all files (`index.html`, `styles.css`, `app.js`, `config.js`, `logo.svg`).
 3. Repo **Settings → Pages → Source: `main` branch / root → Save**.
-4. Your site goes live at `https://<username>.github.io/recital-tickets/`.
+4. Your site goes live at `https://krvn031992.github.io/sod-recital-2026/`.
 
 ---
 

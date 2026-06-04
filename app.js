@@ -58,11 +58,10 @@
       if (CFG[key]) el.textContent = CFG[key];
     });
     document.title = (CFG.eventName || "Recital") + " — Tickets";
-    var mail = $("[data-contact-email]");
-    if (mail && CFG.contactEmail) {
-      mail.href = "mailto:" + CFG.contactEmail;
-      mail.textContent = CFG.contactEmail;
-    }
+    var s = CFG.socials || {};
+    var fb = $("[data-fb]"), ig = $("[data-ig]");
+    if (fb) { if (s.facebook) fb.href = s.facebook; else fb.hidden = true; }
+    if (ig) { if (s.instagram) ig.href = s.instagram; else ig.hidden = true; }
   }
 
   function renderStatus() {

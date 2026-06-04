@@ -134,8 +134,8 @@
               <input name="reference" required placeholder="From your GCash / bank receipt" />
             </label>
             <label class="field">
-              <span>Upload Receipt (optional)</span>
-              <input name="receipt" type="file" accept="image/*,.pdf" />
+              <span>Proof of Payment <em>*</em></span>
+              <input name="receipt" type="file" accept="image/*,.pdf" required />
             </label>
           </div>
         </fieldset>
@@ -153,15 +153,41 @@
     </div>
   </section>
 
+  <!-- ===== Policies ===== -->
+  <section id="policies" class="section">
+    <div class="wrap wrap--narrow">
+      <h2 class="section__title">Seating & Refund Policy</h2>
+      <div class="policy">
+        <h3>Seating & Entry</h3>
+        <ul>
+          <li><strong>VIP (₱2,295)</strong> — Reserved seating with priority entry at <strong>5:00 PM</strong>. Your specific seat assignment is sent once your payment is confirmed. Please arrive early.</li>
+          <li><strong>General Admission (₱1,295)</strong> — Open seating, first-come, first-served. Doors open after VIP guests are seated. Show starts <strong>7:00 PM</strong>.</li>
+          <li>Each student may purchase up to <strong>4 tickets</strong>.</li>
+          <li>Guests aged 3 and above require their own ticket. Outside food, drinks, and professional cameras are subject to Aliw Theater rules.</li>
+        </ul>
+        <h3>Refunds & Exchanges</h3>
+        <ul>
+          <li><strong>All ticket sales are final</strong> — no refunds once payment is confirmed.</li>
+          <li>Tickets are non-transferable and may not be resold.</li>
+          <li>If the show is cancelled or rescheduled by State of Dance, ticket holders will be notified and offered a refund or transfer to the new date.</li>
+          <li>For any concerns, message us on Facebook or Instagram with your reference number (e.g. <em>SOD-260628-AB12</em>).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== Footer ===== -->
   <footer class="footer">
     <div class="wrap footer__inner">
       <div>
-        <p class="footer__org" data-bind="org">School of Dance</p>
-        <p class="footer__line" data-bind="venue">The New Theatre</p>
+        <p class="footer__org" data-bind="org">State of Dance</p>
+        <p class="footer__line"><span data-bind="venue">Aliw Theater</span> · <span data-bind="venueAddress"></span></p>
       </div>
       <div class="footer__contact">
-        <a data-contact-email href="#">Contact</a>
+        <span class="footer__contact-label">Message us:</span>
+        <a data-fb href="#" target="_blank" rel="noopener">Facebook</a>
+        <a data-ig href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="#policies">Policies</a>
       </div>
     </div>
   </footer>
