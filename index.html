@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recital Tickets</title>
+  <meta name="description" content="Official recital ticket registration." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <div class="brand">
+        <span class="brand__mark" aria-hidden="true">✦</span>
+        <span class="brand__name" data-bind="org">School of Dance</span>
+      </div>
+      <a href="#tickets" class="btn btn--ghost btn--sm">Get Tickets</a>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero">
+    <div class="wrap hero__inner">
+      <p class="eyebrow" data-bind="org">School of Dance</p>
+      <h1 class="hero__title" data-bind="eventName">Annual Recital 2026</h1>
+      <p class="hero__meta">
+        <span data-bind="eventDate">TBA</span>
+        <span class="dot">•</span>
+        <span data-bind="venue">The New Theatre</span>
+      </p>
+      <div class="hero__cta">
+        <a href="#tickets" class="btn btn--gold">Reserve Your Seats</a>
+        <a href="#tiers" class="btn btn--ghost">View Pricing</a>
+      </div>
+      <div class="hero__status" data-status hidden></div>
+    </div>
+  </section>
+
+  <!-- ===== Tiers ===== -->
+  <section id="tiers" class="section">
+    <div class="wrap">
+      <h2 class="section__title">Ticket Options</h2>
+      <p class="section__sub">Choose the experience that fits you best.</p>
+      <div class="tiers" data-tiers><!-- rendered by app.js --></div>
+    </div>
+  </section>
+
+  <!-- ===== Purchase form ===== -->
+  <section id="tickets" class="section section--alt">
+    <div class="wrap wrap--narrow">
+      <h2 class="section__title">Register & Reserve</h2>
+      <p class="section__sub">
+        Fill in your details, pay via GCash or bank transfer, then submit
+        your payment reference so we can confirm your seats.
+      </p>
+
+      <form id="ticketForm" class="card form" novalidate>
+        <!-- Buyer details -->
+        <fieldset class="form__group">
+          <legend>Your Details</legend>
+          <div class="grid2">
+            <label class="field">
+              <span>Student Name <em>*</em></span>
+              <input name="studentName" required autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>Class / Level</span>
+              <input name="studentClass" placeholder="e.g. Ballet Intermediate" />
+            </label>
+            <label class="field">
+              <span>Buyer / Parent Name <em>*</em></span>
+              <input name="buyerName" required autocomplete="name" />
+            </label>
+            <label class="field">
+              <span>Mobile Number <em>*</em></span>
+              <input name="phone" required inputmode="tel" autocomplete="tel" placeholder="0917 000 0000" />
+            </label>
+            <label class="field grid2__full">
+              <span>Email <em>*</em></span>
+              <input name="email" type="email" required autocomplete="email" />
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Tier + qty -->
+        <fieldset class="form__group">
+          <legend>Your Tickets</legend>
+          <div class="grid2">
+            <label class="field">
+              <span>Ticket Type <em>*</em></span>
+              <select name="tier" data-tier-select required></select>
+            </label>
+            <label class="field">
+              <span>Quantity <em>*</em></span>
+              <select name="qty" data-qty-select required></select>
+            </label>
+          </div>
+          <p class="hint" data-limit-hint></p>
+        </fieldset>
+
+        <!-- Payment -->
+        <fieldset class="form__group">
+          <legend>Payment</legend>
+          <div class="order" data-order hidden>
+            <div class="order__row">
+              <span data-order-label>—</span>
+              <strong data-order-total>—</strong>
+            </div>
+          </div>
+
+          <div class="pay">
+            <label class="field">
+              <span>Pay Via <em>*</em></span>
+              <select name="payMethod" data-pay-select required>
+                <option value="gcash">GCash</option>
+                <option value="bdo">BDO Bank Transfer</option>
+                <option value="bpi">BPI Bank Transfer</option>
+              </select>
+            </label>
+            <div class="pay__details" data-pay-details>
+              <!-- rendered by app.js -->
+            </div>
+          </div>
+
+          <div class="grid2">
+            <label class="field">
+              <span>Payment Reference No. <em>*</em></span>
+              <input name="reference" required placeholder="From your GCash / bank receipt" />
+            </label>
+            <label class="field">
+              <span>Upload Receipt (optional)</span>
+              <input name="receipt" type="file" accept="image/*,.pdf" />
+            </label>
+          </div>
+        </fieldset>
+
+        <label class="check">
+          <input type="checkbox" name="agree" required />
+          <span>I confirm my details are correct and I have completed payment.</span>
+        </label>
+
+        <button type="submit" class="btn btn--gold btn--block" data-submit>
+          Submit Registration
+        </button>
+        <p class="form__msg" data-form-msg role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap footer__inner">
+      <div>
+        <p class="footer__org" data-bind="org">School of Dance</p>
+        <p class="footer__line" data-bind="venue">The New Theatre</p>
+      </div>
+      <div class="footer__contact">
+        <a data-contact-email href="#">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== Success modal ===== -->
+  <div class="modal" data-modal hidden>
+    <div class="modal__card">
+      <span class="modal__check">✓</span>
+      <h3>Registration Received</h3>
+      <p>Your reference is <strong data-order-id>—</strong>.</p>
+      <p class="modal__note">We'll verify your payment and confirm your seats by email. Please keep your receipt.</p>
+      <button class="btn btn--gold" data-modal-close>Done</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
