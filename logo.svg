@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="State of Dance">
+  <!-- gold disc -->
+  <circle cx="120" cy="122" r="98" fill="#cba14e"/>
+  <!-- dark V wedge -->
+  <path d="M82 54 L120 154 L158 54 Z" fill="#1d0f33"/>
+  <!-- dark stem -->
+  <path d="M110 152 L130 152 L126 196 L114 196 Z" fill="#1d0f33"/>
+  <!-- gold base cup -->
+  <path d="M113 176 L127 176 L130 200 L110 200 Z" fill="#cba14e"/>
+  <!-- gold sparkle -->
+  <path d="M120 62 L127 84 L144 92 L127 100 L120 122 L113 100 L96 92 L113 84 Z" fill="#cba14e"/>
+</svg>

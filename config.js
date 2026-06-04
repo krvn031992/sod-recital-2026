@@ -14,11 +14,11 @@ window.SOD_CONFIG = {
   apiUrl: "",
 
   /* ---- Event details (TODO: confirm) ---- */
-  org: "School of Dance",            // TODO: your studio / school name
-  eventName: "Annual Recital 2026",  // TODO: recital title
-  eventDate: "TBA",                  // TODO: e.g. "August 30, 2026"
-  venue: "The New Theatre",          // TODO: venue name
-  venueAddress: "",                  // TODO: address (optional)
+  org: "State of Dance",
+  eventName: "Fantasy — A Decade of Non-Stop Moving",
+  eventDate: "June 28, 2026 · 7:00 PM",
+  venue: "Aliw Theater",
+  venueAddress: "CCP Complex, Pasay City",
   currency: "₱",                // Philippine Peso
 
   /* ---- Editable settings (Config tab overrides these) ---- */
@@ -35,7 +35,7 @@ window.SOD_CONFIG = {
       price: 2295,
       entry: "Early entry 5:00 PM",
       note: "Reserved seating · priority entry",
-      allocation: 300                // TODO: how many VIP seats?
+      allocation: 300                // 300 VIP seats only
     },
     {
       id: "genad",
@@ -43,15 +43,15 @@ window.SOD_CONFIG = {
       price: 1295,
       entry: "Doors open after VIP",
       note: "Open seating",
-      allocation: 975                // TODO: balances to total capacity
+      allocation: 975                // 1275 total − 300 VIP
     }
   ],
 
   /* ---- Payment accounts (manual transfer) (TODO) ---- */
   payments: {
-    gcash: { name: "TODO: GCash account name", number: "TODO: 0917 000 0000" },
-    bdo:   { bank: "BDO", name: "TODO: account name", number: "TODO: BDO account no." },
-    bpi:   { bank: "BPI", name: "TODO: account name", number: "TODO: BPI account no." }
+    gcash: { name: "State of Dance Studio", number: "0906 099 4503" },     // TODO: confirm GCash registered name
+    bdo:   { bank: "BDO", name: "State of Dance Studio", number: "0023 8027 6338" }, // TODO: confirm account name
+    bpi:   { bank: "BPI", name: "State of Dance Studio", number: "3119 2606 84" }    // TODO: confirm account name
   },
 
   /* ---- Contact ---- */
