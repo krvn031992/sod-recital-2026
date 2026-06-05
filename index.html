@@ -104,12 +104,91 @@
           <p class="hint" data-limit-hint></p>
         </fieldset>
 
+        <!-- Add-ons -->
+        <fieldset class="form__group" data-addons hidden>
+          <legend>Add-ons <span class="legend__opt">(optional)</span></legend>
+
+          <!-- Shout-out -->
+          <div class="addon" data-addon="shoutout" hidden>
+            <label class="addon__head">
+              <input type="checkbox" data-addon-toggle="shoutout" />
+              <span class="addon__title" data-addon-label="shoutout">Dancer Shout-out</span>
+              <span class="addon__price" data-addon-price="shoutout"></span>
+            </label>
+            <p class="addon__note" data-addon-note="shoutout"></p>
+            <div class="addon__body" data-addon-body="shoutout" hidden>
+              <div class="grid2">
+                <label class="field">
+                  <span>Quantity</span>
+                  <select name="shoutoutQty" data-addon-qty="shoutout"></select>
+                </label>
+                <label class="field">
+                  <span>Dancer being cheered</span>
+                  <input name="shoutoutDancer" placeholder="Dancer's name" />
+                </label>
+                <label class="field grid2__full">
+                  <span>Your shout-out message</span>
+                  <textarea name="shoutoutMessage" rows="2" maxlength="200" placeholder="e.g. Go Maria! We're so proud of you! 💜"></textarea>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Flowers -->
+          <div class="addon" data-addon="flowers" hidden>
+            <label class="addon__head">
+              <input type="checkbox" data-addon-toggle="flowers" />
+              <span class="addon__title" data-addon-label="flowers">Flowers</span>
+            </label>
+            <p class="addon__note" data-addon-note="flowers"></p>
+            <div class="addon__body" data-addon-body="flowers" hidden>
+              <div class="grid2">
+                <label class="field">
+                  <span>Choose flowers</span>
+                  <select name="flowersOption" data-addon-options="flowers"></select>
+                </label>
+                <label class="field">
+                  <span>Quantity</span>
+                  <select name="flowersQty" data-addon-qty="flowers"></select>
+                </label>
+                <label class="field grid2__full">
+                  <span>Deliver to (dancer) — optional</span>
+                  <input name="flowersDancer" placeholder="Dancer's name" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- T-Shirt -->
+          <div class="addon" data-addon="shirt" hidden>
+            <label class="addon__head">
+              <input type="checkbox" data-addon-toggle="shirt" />
+              <span class="addon__title" data-addon-label="shirt">Event T-Shirt</span>
+              <span class="addon__price" data-addon-price="shirt"></span>
+            </label>
+            <p class="addon__note" data-addon-note="shirt"></p>
+            <div class="addon__body" data-addon-body="shirt" hidden>
+              <div class="grid2">
+                <label class="field">
+                  <span>Size</span>
+                  <select name="shirtSize" data-addon-sizes="shirt"></select>
+                </label>
+                <label class="field">
+                  <span>Quantity</span>
+                  <select name="shirtQty" data-addon-qty="shirt"></select>
+                </label>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
         <!-- Payment -->
         <fieldset class="form__group">
           <legend>Payment</legend>
           <div class="order" data-order hidden>
-            <div class="order__row">
-              <span data-order-label>—</span>
+            <div class="order__lines" data-order-lines></div>
+            <div class="order__row order__row--total">
+              <span>Total</span>
               <strong data-order-total>—</strong>
             </div>
           </div>

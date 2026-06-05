@@ -48,6 +48,7 @@
     renderStatus();
     renderTiers();
     renderTierSelect();
+    renderAddons();
     renderPayDetails();
     wireForm();
   }
@@ -130,13 +131,138 @@
     var t = tierById($("[data-tier-select]").value);
     var qty = Number($("[data-qty-select]").value || 0);
     var box = $("[data-order]");
+    var lines = [];
+    var total = 0;
+
     if (t && qty > 0) {
-      $("[data-order-label]").textContent = qty + " × " + t.name;
-      $("[data-order-total]").textContent = peso(t.price * qty);
+      lines.push({ label: qty + " × " + t.name, amount: t.price * qty });
+      total += t.price * qty;
+    }
+    computeAddons().items.forEach(function (it) {
+      lines.push({ label: it.label, amount: it.amount });
+      total += it.amount;
+    });
+
+    if (lines.length) {
+      $("[data-order-lines]").innerHTML = lines.map(function (l) {
+        return '<div class="order__row"><span>' + esc(l.label) + "</span><span>" + peso(l.amount) + "</span></div>";
+      }).join("");
+      $("[data-order-total]").textContent = peso(total);
       box.hidden = false;
     } else {
       box.hidden = true;
     }
+  }
+
+  /* ---------- Add-ons ---------- */
+  function renderAddons() {
+    var a = CFG.addons || {};
+    var wrap = $("[data-addons]");
+    if (!wrap) return;
+    var anyOn = false;
+
+    // Shout-out
+    if (a.shoutout && a.shoutout.enabled) {
+      anyOn = true;
+      showAddon("shoutout", a.shoutout);
+      setText('[data-addon-price="shoutout"]', "+" + peso(a.shoutout.price) + " each");
+      fillSelect('[data-addon-qty="shoutout"]', range1(a.shoutout.maxQty || 5));
+    }
+    // Flowers
+    if (a.flowers && a.flowers.enabled) {
+      anyOn = true;
+      showAddon("flowers", a.flowers);
+      var opts = (a.flowers.options || []).map(function (o) {
+        return { value: o.id, label: o.name + " — " + peso(o.price) };
+      });
+      fillSelect('[data-addon-options="flowers"]', opts);
+      fillSelect('[data-addon-qty="flowers"]', range1(a.flowers.maxQty || 10));
+    }
+    // Shirt
+    if (a.shirt && a.shirt.enabled) {
+      anyOn = true;
+      showAddon("shirt", a.shirt);
+      setText('[data-addon-price="shirt"]', "+" + peso(a.shirt.price) + " each");
+      fillSelect('[data-addon-sizes="shirt"]', (a.shirt.sizes || []).map(function (s) { return { value: s, label: s }; }));
+      fillSelect('[data-addon-qty="shirt"]', range1(a.shirt.maxQty || 10));
+    }
+
+    wrap.hidden = !anyOn;
+
+    // Toggles + change listeners
+    $$("[data-addon-toggle]").forEach(function (cb) {
+      var id = cb.getAttribute("data-addon-toggle");
+      cb.addEventListener("change", function () {
+        var body = $('[data-addon-body="' + id + '"]');
+        if (body) body.hidden = !cb.checked;
+        updateOrder();
+      });
+    });
+    $$('[data-addon-body] select, [data-addon-body] input').forEach(function (el) {
+      el.addEventListener("change", updateOrder);
+    });
+  }
+
+  function showAddon(id, cfg) {
+    var card = $('[data-addon="' + id + '"]');
+    if (card) card.hidden = false;
+    setText('[data-addon-label="' + id + '"]', cfg.label);
+    setText('[data-addon-note="' + id + '"]', cfg.note || "");
+  }
+  function setText(sel, txt) { var el = $(sel); if (el) el.textContent = txt; }
+  function fillSelect(sel, items) {
+    var el = $(sel); if (!el) return;
+    el.innerHTML = items.map(function (it) {
+      return '<option value="' + esc(it.value) + '">' + esc(it.label) + "</option>";
+    }).join("");
+  }
+  function range1(n) {
+    var out = []; for (var i = 1; i <= n; i++) out.push({ value: i, label: String(i) }); return out;
+  }
+
+  function computeAddons() {
+    var a = CFG.addons || {};
+    var form = $("#ticketForm");
+    var items = [], total = 0;
+    function on(id) { var cb = $('[data-addon-toggle="' + id + '"]'); return cb && cb.checked; }
+
+    if (a.shoutout && a.shoutout.enabled && on("shoutout")) {
+      var sq = Number(form.shoutoutQty.value || 1);
+      var amt = a.shoutout.price * sq;
+      var sDancer = form.shoutoutDancer.value.trim();
+      var sMsg = form.shoutoutMessage.value.trim();
+      items.push({
+        type: "shoutout", label: sq + " × Shout-out", amount: amt,
+        summary: sq + " × Shout-out" + (sDancer ? " for " + sDancer : "") + (sMsg ? ': "' + sMsg + '"' : ""),
+        detail: { qty: sq, dancer: sDancer, message: sMsg }
+      });
+      total += amt;
+    }
+    if (a.flowers && a.flowers.enabled && on("flowers")) {
+      var fopt = (a.flowers.options || []).filter(function (o) { return o.id === form.flowersOption.value; })[0];
+      if (fopt) {
+        var fq = Number(form.flowersQty.value || 1);
+        var famt = fopt.price * fq;
+        var fDancer = form.flowersDancer.value.trim();
+        items.push({
+          type: "flowers", label: fq + " × " + fopt.name, amount: famt,
+          summary: fq + " × " + fopt.name + (fDancer ? " for " + fDancer : ""),
+          detail: { option: fopt.name, qty: fq, dancer: fDancer }
+        });
+        total += famt;
+      }
+    }
+    if (a.shirt && a.shirt.enabled && on("shirt")) {
+      var shq = Number(form.shirtQty.value || 1);
+      var shamt = a.shirt.price * shq;
+      items.push({
+        type: "shirt", label: shq + " × T-Shirt (" + form.shirtSize.value + ")", amount: shamt,
+        summary: shq + " × T-Shirt (" + form.shirtSize.value + ")",
+        detail: { size: form.shirtSize.value, qty: shq }
+      });
+      total += shamt;
+    }
+    return { items: items, total: total, text: items.map(function (i) { return i.summary || i.label; }).join("; ") };
   }
 
   /* ---------- 3. Payment details ---------- */
@@ -230,6 +356,8 @@
   }
 
   function buildPayload(form, t, qty) {
+    var addons = computeAddons();
+    var ticketsSubtotal = t.price * qty;
     var base = {
       timestamp: new Date().toISOString(),
       studentName: form.studentName.value.trim(),
@@ -241,7 +369,11 @@
       tierName: t.name,
       unitPrice: t.price,
       qty: qty,
-      total: t.price * qty,
+      ticketsSubtotal: ticketsSubtotal,
+      addons: addons.items,
+      addonsText: addons.text,
+      addonsTotal: addons.total,
+      grandTotal: ticketsSubtotal + addons.total,
       payMethod: form.payMethod.value,
       reference: form.reference.value.trim()
     };

@@ -53,7 +53,8 @@ function setup() {
 
   sheet_(ss, SHEETS.REG, [
     "Order ID", "Timestamp", "Student Name", "Class/Level", "Buyer Name",
-    "Email", "Phone", "Tier", "Qty", "Unit Price", "Total",
+    "Email", "Phone", "Tier", "Qty", "Unit Price", "Tickets Subtotal",
+    "Add-ons", "Add-ons Total", "Grand Total",
     "Pay Method", "Reference No.", "Receipt", "Status"
   ]);
 }
@@ -96,8 +97,9 @@ function adminData_() {
     rows.push({
       orderId: r[0], timestamp: r[1], studentName: r[2], studentClass: r[3],
       buyerName: r[4], email: r[5], phone: r[6], tier: r[7], qty: Number(r[8]),
-      unitPrice: Number(r[9]), total: Number(r[10]), payMethod: r[11],
-      reference: r[12], receipt: r[13], status: r[14] || "Pending"
+      unitPrice: Number(r[9]), ticketsSubtotal: Number(r[10]),
+      addons: r[11], addonsTotal: Number(r[12]), total: Number(r[13]),
+      payMethod: r[14], reference: r[15], receipt: r[16], status: r[17] || "Pending"
     });
   }
   var cfg = readConfig_();
@@ -156,7 +158,7 @@ function remainingByTier_(ss, tiers) {
   var reg = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
   var sold = {};
   for (var i = 1; i < reg.length; i++) {
-    var status = String(reg[i][14] || "").toLowerCase();
+    var status = String(reg[i][17] || "").toLowerCase();
     if (status === "cancelled" || status === "rejected") continue;
     var tier = String(reg[i][7]);
     sold[tier] = (sold[tier] || 0) + Number(reg[i][8] || 0);
@@ -202,13 +204,18 @@ function doPost(e) {
     var receiptLink = "";
     if (data.receiptData) receiptLink = saveReceipt_(orderId, data);
 
+    var ticketsSubtotal = tier.price * qty;
+    var addonsTotal = Number(data.addonsTotal) || 0;
+    var grandTotal = ticketsSubtotal + addonsTotal;
+
     ss.getSheetByName(SHEETS.REG).appendRow([
       orderId, data.timestamp || new Date(), data.studentName, data.studentClass,
       data.buyerName, data.email, data.phone, tier.name, qty, tier.price,
-      tier.price * qty, data.payMethod, data.reference, receiptLink, "Pending"
+      ticketsSubtotal, data.addonsText || "", addonsTotal, grandTotal,
+      data.payMethod, data.reference, receiptLink, "Pending"
     ]);
 
-    sendConfirmation_(cfg, data, tier, qty, orderId);
+    sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal);
     return json_({ ok: true, orderId: orderId });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
@@ -224,7 +231,7 @@ function updateStatus_(ss, orderId, status) {
   var ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
   for (var i = 1; i < ids.length; i++) {
     if (String(ids[i][0]) === String(orderId)) {
-      sh.getRange(i + 1, 15).setValue(status); // column 15 = Status
+      sh.getRange(i + 1, 18).setValue(status); // column 18 = Status
       return { ok: true, orderId: orderId, status: status };
     }
   }
@@ -242,19 +249,20 @@ function saveReceipt_(orderId, data) {
 }
 
 /* ---------- Auto-confirmation email to the buyer ---------- */
-function sendConfirmation_(cfg, data, tier, qty, orderId) {
+function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal) {
   if (!data.email) return;
   try {
     var peso = "₱";
-    var total = (tier.price * qty).toLocaleString();
+    var addonLine = (data.addonsText) ? "  Add-ons: " + data.addonsText + " (" + peso + Number(addonsTotal || 0).toLocaleString() + ")\n" : "";
     var subject = "Registration received — " + (cfg.eventName || "Recital") + " (" + orderId + ")";
     var body =
       "Hi " + (data.buyerName || "there") + ",\n\n" +
       "We've received your registration for " + (cfg.eventName || "the recital") + ".\n" +
       "Reference No: " + orderId + "\n\n" +
       "  Student: " + data.studentName + "\n" +
-      "  Ticket:  " + qty + " x " + tier.name + "\n" +
-      "  Total:   " + peso + total + "\n" +
+      "  Ticket:  " + qty + " x " + tier.name + " (" + peso + (tier.price * qty).toLocaleString() + ")\n" +
+      addonLine +
+      "  TOTAL:   " + peso + Number(grandTotal || tier.price * qty).toLocaleString() + "\n" +
       "  Payment: " + String(data.payMethod).toUpperCase() + " · Ref " + data.reference + "\n\n" +
       "Status: PENDING VERIFICATION. We'll review your proof of payment and " +
       "confirm your seat(s) in a follow-up message. VIP seat assignments are sent upon confirmation.\n\n" +

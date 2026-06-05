@@ -7,6 +7,8 @@ backend (free) for tracking registrations and exporting payments.
 ## What it does
 - VIP & General Admission tiers (prices, entry times, seat counts)
 - Per-student ticket limit (default 4) — editable
+- Optional **add-on upsells**: Dancer Shout-out (₱200), Flowers, Event T-Shirt
+  — all priced/edited in `config.js` (`addons`) and tracked per order
 - Manual payment via **GCash, BDO, BPI** with reference no. + **required proof-of-payment upload**
 - Open / close registration switch
 - **Auto-confirmation email** sent to each buyer on submit

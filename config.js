@@ -11,7 +11,7 @@ window.SOD_CONFIG = {
   /* ---- Google Sheets backend ----
      Paste your deployed Apps Script Web App URL here (see README, Step 2).
      Leave "" to preview the site locally with the defaults below.        */
-  apiUrl: "",
+  apiUrl: "https://script.google.com/macros/s/AKfycbzTXxQKntiR0KjusYF0sBoc1lfrc1rT36IXWsBrOP0MkSNca9CzsUIQEjrJqFZyFMNxxw/exec",
 
   /* ---- Event details (TODO: confirm) ---- */
   org: "State of Dance",
@@ -46,6 +46,37 @@ window.SOD_CONFIG = {
       allocation: 975                // 1275 total − 300 VIP
     }
   ],
+
+  /* ---- Optional add-on upsells ----
+     Editable here. Set enabled:false to hide any of them.                 */
+  addons: {
+    shoutout: {
+      enabled: true,
+      label: "Dancer Shout-out",
+      price: 200,
+      note: "We'll display your cheer for the dancer during the show.",
+      maxQty: 5
+    },
+    flowers: {
+      enabled: true,
+      label: "Flowers for the Dancer",
+      note: "A bouquet handed to your dancer on stage.",
+      maxQty: 10,
+      options: [
+        { id: "rose",    name: "Single Rose",     price: 150 },  // TODO: confirm price
+        { id: "bouquet", name: "Bouquet",         price: 350 },  // TODO: confirm price
+        { id: "premium", name: "Premium Bouquet", price: 650 }   // TODO: confirm price
+      ]
+    },
+    shirt: {
+      enabled: true,
+      label: "Event T-Shirt",
+      price: 450,                                                 // TODO: confirm price
+      note: "Fantasy 2026 souvenir shirt.",
+      sizes: ["XS", "S", "M", "L", "XL", "2XL"],
+      maxQty: 10
+    }
+  },
 
   /* ---- Payment accounts (manual transfer) (TODO) ---- */
   payments: {
