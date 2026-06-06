@@ -42,7 +42,7 @@ function setup() {
       ["totalCapacity", 1275],
       ["eventName", "Fantasy — A Decade of Non-Stop Moving"],
       ["eventDate", "June 28, 2026 · 7:00 PM"],
-      ["venue", "The New Theatre"]
+      ["venue", "Aliw Theater"]
     ]);
   }
 

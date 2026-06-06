@@ -11,7 +11,7 @@ window.SOD_CONFIG = {
   /* ---- Google Sheets backend ----
      Paste your deployed Apps Script Web App URL here (see README, Step 2).
      Leave "" to preview the site locally with the defaults below.        */
-  apiUrl: "https://script.google.com/macros/s/AKfycbzTXxQKntiR0KjusYF0sBoc1lfrc1rT36IXWsBrOP0MkSNca9CzsUIQEjrJqFZyFMNxxw/exec",
+  apiUrl: "https://script.google.com/macros/s/AKfycbyINOjH5d8HsvQY2LtsCaqezO43OtO8jLU3Ix4rrOeUmS7PLSlcp4tBQQgOkkR8aq7gaQ/exec",
 
   /* ---- Event details (TODO: confirm) ---- */
   org: "State of Dance",
