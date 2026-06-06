@@ -276,6 +276,32 @@ a { color: inherit; }
 .modal__card strong { color: var(--gold); }
 .modal__note { font-size: .88rem; }
 .modal__card .btn { margin-top: 1.4rem; }
+.modal__card--ticket { max-width: 460px; }
+
+/* ---- Success ticket + QR ---- */
+.ticket { background: #130620; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 1.2rem; margin: 1.2rem 0; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.ticket__qr img { width: 184px; height: 184px; image-rendering: pixelated; background: #fff; padding: 8px; border-radius: 8px; display: block; }
+.ticket__details { width: 100%; margin: 0; display: flex; flex-direction: column; gap: .4rem; }
+.ticket__details > div { display: flex; justify-content: space-between; gap: 1rem; border-bottom: 1px dashed var(--line-soft); padding-bottom: .35rem; }
+.ticket__details dt { color: var(--text-soft); font-size: .85rem; margin: 0; }
+.ticket__details dd { margin: 0; color: var(--text); font-weight: 700; font-size: .9rem; text-align: right; }
+
+/* ---- Verify / check-in page ---- */
+.verify { min-height: 80vh; display: grid; place-items: center; padding: 2rem 1rem; }
+.verify__card { width: min(440px, 94vw); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+.verify__status { padding: 1.4rem; text-align: center; font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: #fff; }
+.vs--confirmed { background: linear-gradient(135deg, #1f8f5b, #14663f); }
+.vs--pending   { background: linear-gradient(135deg, var(--gold-deep), #7a5a1f); color: #fff; }
+.vs--rejected, .vs--cancelled { background: linear-gradient(135deg, #b23121, #7a1f15); }
+.vs--unknown   { background: var(--aub-700); }
+.verify__body { padding: 1.4rem 1.6rem 1.8rem; }
+.verify__name { font-family: var(--font-display); font-size: 1.4rem; color: #fff; margin: 0 0 .2rem; }
+.verify__sub { color: var(--text-soft); margin: 0 0 1.2rem; font-size: .9rem; }
+.verify__row { display: flex; justify-content: space-between; gap: 1rem; padding: .5rem 0; border-bottom: 1px solid var(--line-soft); }
+.verify__row span { color: var(--text-soft); font-size: .85rem; }
+.verify__row b { color: var(--text); text-align: right; }
+.verify__row b.big { color: var(--gold); font-size: 1.1rem; font-family: var(--font-display); }
+.verify__msg { text-align: center; color: var(--text-soft); padding: 2rem; }
 
 /* ---- Admin dashboard ---- */
 .admin__bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }

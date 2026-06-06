@@ -409,7 +409,7 @@
         if (!CFG.apiUrl) {
           // Preview mode — no backend wired yet.
           console.log("[SOD] Registration payload (preview only):", payload);
-          succeed("PREVIEW-" + Date.now());
+          succeed("SOD-PREVIEW-" + Date.now().toString(36).toUpperCase(), payload);
           return;
         }
         return fetch(CFG.apiUrl, {
@@ -419,7 +419,7 @@
         })
           .then(function (r) { return r.json(); })
           .then(function (res) {
-            if (res && res.ok) succeed(res.orderId || "—");
+            if (res && res.ok) succeed(res.orderId || "—", payload);
             else fail((res && res.error) || "Something went wrong. Please try again.");
           });
       }).catch(function () {
@@ -431,16 +431,44 @@
     });
 
     function fail(m) { msg.className = "form__msg is-err"; msg.textContent = m; btn.disabled = false; btn.textContent = "Submit Registration"; }
-    function succeed(orderId) {
+    function succeed(orderId, payload) {
       msg.className = "form__msg is-ok";
       msg.textContent = "Registration received!";
       $("[data-order-id]").textContent = orderId;
+      renderTicket(orderId, payload);
       $("[data-modal]").hidden = false;
       form.reset();
       selectedSeats = [];
       updateVipSeat();
       updateOrder();
     }
+  }
+
+  /* ---------- Success ticket + QR ---------- */
+  function renderTicket(orderId, p) {
+    var qbox = $("[data-qr]");
+    if (qbox) {
+      qbox.innerHTML = "";
+      try {
+        var verifyUrl = new URL("verify.html?id=" + encodeURIComponent(orderId), location.href).href;
+        var qr = qrcode(0, "M"); qr.addData(verifyUrl); qr.make();
+        qbox.innerHTML = qr.createImgTag(5, 8);
+      } catch (e) { qbox.textContent = orderId; }
+    }
+    var dl = $("[data-ticket-details]");
+    if (!dl) return;
+    var rows = [
+      ["Name", p ? p.buyerName : ""],
+      ["Student", p ? (p.studentName + (p.studentBranch ? " · " + p.studentBranch : "")) : ""],
+      ["Ticket", p ? (p.qty + " × " + p.tierName) : ""],
+      ["Seat(s)", (p && p.seats) ? p.seats : "—"],
+      ["Add-ons", (p && p.addonsText) ? p.addonsText : "—"],
+      ["Total", p ? peso(p.grandTotal) : ""],
+      ["Status", "Pending verification"]
+    ];
+    dl.innerHTML = rows.map(function (r) {
+      return "<div><dt>" + esc(r[0]) + "</dt><dd>" + esc(r[1]) + "</dd></div>";
+    }).join("");
   }
 
   function buildPayload(form, t, qty) {

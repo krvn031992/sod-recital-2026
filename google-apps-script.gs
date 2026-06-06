@@ -27,6 +27,9 @@ var RECEIPTS_FOLDER = "Recital Receipts";
    You'll type the same password to log into the admin dashboard.        */
 var ADMIN_KEY = "CHANGE-THIS-PASSWORD";
 
+/* Your public site URL (used for the ticket/QR link in emails). */
+var SITE_URL = "https://krvn031992.github.io/sod-recital-2026";
+
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -79,6 +82,9 @@ function doGet(e) {
         return json_({ ok: false, error: "Unauthorized" });
       }
       return json_(adminData_());
+    }
+    if (action === "verify") {
+      return json_(verifyOrder_(e.parameter ? e.parameter.id : ""));
     }
     return json_(readConfig_());
   } catch (err) {
@@ -153,6 +159,25 @@ function readConfig_() {
   out.remaining = remainingByTier_(ss, out.tiers);
   out.takenVipSeats = takenSeats_(ss);
   return out;
+}
+
+/* ---------- Verify a single order (venue QR scan) ---------- */
+function verifyOrder_(id) {
+  if (!id) return { ok: false, error: "No ticket ID." };
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var v = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
+  for (var i = 1; i < v.length; i++) {
+    if (String(v[i][0]) === String(id)) {
+      var r = v[i];
+      return { ok: true, order: {
+        orderId: r[0], studentName: r[2], studentClass: r[3], studentBranch: r[4],
+        buyerName: r[5], email: r[6], phone: r[7], tier: r[8], seats: r[9],
+        qty: Number(r[10]), addons: r[13], total: Number(r[15]),
+        payMethod: r[16], status: r[18] || "Pending"
+      } };
+    }
+  }
+  return { ok: false, error: "Not found" };
 }
 
 function takenSeats_(ss) {
@@ -288,6 +313,7 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
       addonLine +
       "  TOTAL:   " + peso + Number(grandTotal || tier.price * qty).toLocaleString() + "\n" +
       "  Payment: " + String(data.payMethod).toUpperCase() + " (screenshot submitted)\n\n" +
+      "Your ticket / QR (present at the venue):\n" + SITE_URL + "/verify.html?id=" + orderId + "\n\n" +
       "Status: PENDING VERIFICATION. We'll review your proof of payment and " +
       "confirm your seat(s) in a follow-up message. VIP seat assignments are sent upon confirmation.\n\n" +
       (cfg.eventDate ? "Show date: " + cfg.eventDate + "\n" : "") +

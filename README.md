@@ -10,7 +10,9 @@ backend (free) for tracking registrations and exporting payments.
 - Optional **add-on upsells**: Dancer Shout-out (₱200), Flowers (choose a
   design), Event T-Shirt (₱750, with photo) — priced/edited in `config.js`
   (`addons`) and tracked per order
-- **Seat map** display (Aliw Theater); VIP buyers enter preferred seat(s)
+- **QR ticket** generated on registration; scan at the venue (`verify.html`)
+  to see the buyer, seats, totals, and live payment status
+- **Seat map** display (Aliw Theater); VIP buyers pick seats (interactive)
 - Student **Class + Branch** capture (branches editable in `config.js`)
 - Manual payment via **GCash, BDO, BPI** with a **required payment screenshot**
   (no separate reference number — the screenshot already shows it)

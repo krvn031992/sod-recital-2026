@@ -322,15 +322,22 @@
 
   <!-- ===== Success modal ===== -->
   <div class="modal" data-modal hidden>
-    <div class="modal__card">
+    <div class="modal__card modal__card--ticket">
       <span class="modal__check">✓</span>
-      <h3>Registration Received</h3>
-      <p>Your reference is <strong data-order-id>—</strong>.</p>
-      <p class="modal__note">We'll verify your payment and confirm your seats by email. Please keep your receipt.</p>
+      <h3>You're Registered!</h3>
+      <p>Reference <strong data-order-id>—</strong></p>
+
+      <div class="ticket" data-ticket>
+        <div class="ticket__qr" data-qr></div>
+        <dl class="ticket__details" data-ticket-details></dl>
+      </div>
+
+      <p class="modal__note">📲 <strong>Screenshot or save this QR code</strong> and present it at the venue for entry. We'll verify your payment and confirm your seat(s) by email.</p>
       <button class="btn btn--gold" data-modal-close>Done</button>
     </div>
   </div>
 
+  <script src="assets/qrcode.min.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
