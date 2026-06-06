@@ -26,15 +26,8 @@ window.SOD_CONFIG = {
 
   /* ---- Seat map ---- */
   seatMap: {
-    image: "assets/seatmap.png",   // Aliw Theater overview (reference)
-    vipChooseSeats: true,          // VIP buyers click their seats
-    // VIP seating grid (rows x seatsPerRow should total your VIP capacity).
-    // 15 rows x 20 = 300 VIP seats. Adjust to match the real Aliw VIP zone.
-    vipLayout: {
-      sectionLabel: "VIP · Orchestra",
-      rows: ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"],
-      seatsPerRow: 20
-    }
+    image: "assets/seatmap.png",   // original Aliw Theater seating plan
+    vipChooseSeats: true           // VIP buyers type their Row + Seat number
   },
 
   /* ---- Editable settings (Config tab overrides these) ---- */

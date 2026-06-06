@@ -63,59 +63,91 @@
       list.map(function (b) { return '<option value="' + esc(b) + '">' + esc(b) + "</option>"; }).join("");
   }
 
+  var seatPairs = [];
+
   function updateVipSeat() {
     var box = $("[data-vipseat]");
     if (!box) return;
     var sm = CFG.seatMap || {};
-    var isVip = $("[data-tier-select]").value === "vip" && sm.vipChooseSeats && sm.vipLayout;
+    var isVip = $("[data-tier-select]").value === "vip" && sm.vipChooseSeats;
     box.hidden = !isVip;
     if (!isVip) { selectedSeats = []; setSeatInput(); return; }
-    renderSeatPicker();
+    renderTakenList();
+    renderSeatEntry();
   }
 
+  function normSeat(s) { return String(s || "").replace(/\s+/g, "").toUpperCase(); }
   function takenMap() {
-    var taken = {};
-    (CFG.takenVipSeats || []).forEach(function (s) { taken[String(s).trim().toUpperCase()] = true; });
-    return taken;
+    var t = {};
+    (CFG.takenVipSeats || []).forEach(function (s) { t[normSeat(s)] = true; });
+    return t;
   }
 
-  function renderSeatPicker() {
-    var lay = CFG.seatMap.vipLayout;
-    var taken = takenMap();
-    var need = Number($("[data-qty-select]").value || 0);
-    setText("[data-seat-section]", lay.sectionLabel || "Choose your VIP seats");
-    setText("[data-seat-need]", need || 0);
-    // drop any selected seat that is now taken or beyond the needed count
-    selectedSeats = selectedSeats.filter(function (s) { return !taken[s.toUpperCase()]; });
-    if (need && selectedSeats.length > need) selectedSeats = selectedSeats.slice(0, need);
+  function renderTakenList() {
+    var box = $("[data-taken-list]");
+    if (!box) return;
+    var t = (CFG.takenVipSeats || []).slice().sort();
+    if (!t.length) { box.innerHTML = '<span class="taken__none">No VIP seats taken yet — you have first pick!</span>'; return; }
+    box.innerHTML = '<span class="taken__label">Already taken:</span> ' +
+      t.map(function (s) { return '<span class="taken__chip">' + esc(s) + "</span>"; }).join("");
+  }
 
-    var html = '<div class="stage">S T A G E</div>';
-    (lay.rows || []).forEach(function (r) {
-      html += '<div class="seat-row"><span class="seat-rowlabel">' + esc(r) + "</span>";
-      for (var n = 1; n <= lay.seatsPerRow; n++) {
-        var label = r + n;
-        var st = taken[label.toUpperCase()] ? "taken" : (selectedSeats.indexOf(label) > -1 ? "sel" : "free");
-        html += '<button type="button" class="seat seat--' + st + '" data-seat="' + esc(label) + '"' +
-          (st === "taken" ? " disabled" : "") + ' title="' + esc(label) + '">' + n + "</button>";
-      }
-      html += "</div>";
+  function captureSeatPairs() {
+    var rows = $$('[data-seatentry] [data-seat-row]');
+    if (!rows.length) return;
+    seatPairs = rows.map(function (el) {
+      var i = el.getAttribute("data-seat-row");
+      var num = $('[data-seatentry] [data-seat-num="' + i + '"]');
+      return { row: el.value, num: num ? num.value : "" };
     });
-    var wrap = $("[data-seatpicker]");
-    wrap.innerHTML = html;
-    $$('[data-seatpicker] .seat:not(.seat--taken)').forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var label = btn.getAttribute("data-seat");
-        var idx = selectedSeats.indexOf(label);
-        var needNow = Number($("[data-qty-select]").value || 0);
-        if (idx > -1) selectedSeats.splice(idx, 1);
-        else {
-          if (!needNow || selectedSeats.length >= needNow) return; // choose qty first / at limit
-          selectedSeats.push(label);
-        }
-        renderSeatPicker(); setSeatInput(); updateOrder();
-      });
+  }
+
+  function renderSeatEntry() {
+    captureSeatPairs(); // preserve typed values across re-renders
+    var need = Number($("[data-qty-select]").value || 0);
+    setText("[data-seat-need]", need || 0);
+    var html = "";
+    for (var i = 0; i < need; i++) {
+      var p = seatPairs[i] || { row: "", num: "" };
+      html += '<div class="seatentry__row">' +
+        '<span class="seatentry__n">Seat ' + (i + 1) + '</span>' +
+        '<input class="seatentry__in" data-seat-row="' + i + '" value="' + esc(p.row) + '" placeholder="Row (e.g. G)" maxlength="4" autocomplete="off" />' +
+        '<input class="seatentry__in" data-seat-num="' + i + '" value="' + esc(p.num) + '" inputmode="numeric" placeholder="Seat # (e.g. 12)" maxlength="4" autocomplete="off" />' +
+        '<span class="seatentry__status" data-seat-status="' + i + '"></span>' +
+        "</div>";
+    }
+    $("[data-seatentry]").innerHTML = html;
+    $$('[data-seatentry] input').forEach(function (inp) { inp.addEventListener("input", syncSeats); });
+    syncSeats();
+  }
+
+  function syncSeats() {
+    captureSeatPairs();
+    var taken = takenMap();
+    var seen = {};
+    selectedSeats = [];
+    seatPairs.forEach(function (p, i) {
+      var status = $('[data-seat-status="' + i + '"]');
+      var row = String(p.row || "").trim();
+      var num = String(p.num || "").trim();
+      if (!row && !num) { setStatus(status, "", ""); return; }
+      var label = (row + num).toUpperCase().replace(/\s+/g, "");
+      var norm = normSeat(label);
+      if (!row || !num) { setStatus(status, "incomplete", "wait"); return; }
+      if (taken[norm]) { setStatus(status, "✕ taken", "bad"); return; }
+      if (seen[norm]) { setStatus(status, "✕ duplicate", "bad"); return; }
+      seen[norm] = true;
+      selectedSeats.push(label);
+      setStatus(status, "✓ available", "ok");
     });
-    setSeatInput();
+    setText("[data-seat-count]", selectedSeats.length);
+    var inp = $('[name="vipSeats"]'); if (inp) inp.value = selectedSeats.join(", ");
+    updateOrder();
+  }
+  function setStatus(el, txt, cls) {
+    if (!el) return;
+    el.textContent = txt;
+    el.className = "seatentry__status" + (cls ? " seatentry__status--" + cls : "");
   }
 
   function setSeatInput() {
@@ -398,8 +430,8 @@
       var t = tierById(form.tier.value);
       var qty = Number(form.qty.value);
       if (!t || !qty) return fail("Please choose a ticket type and quantity.");
-      if (t.id === "vip" && CFG.seatMap && CFG.seatMap.vipChooseSeats && CFG.seatMap.vipLayout) {
-        if (selectedSeats.length !== qty) return fail("Please select exactly " + qty + " VIP seat(s) on the map.");
+      if (t.id === "vip" && CFG.seatMap && CFG.seatMap.vipChooseSeats) {
+        if (selectedSeats.length !== qty) return fail("Please enter exactly " + qty + " valid VIP seat(s) — Row + Seat number, not already taken.");
       }
 
       btn.disabled = true;
@@ -439,6 +471,7 @@
       $("[data-modal]").hidden = false;
       form.reset();
       selectedSeats = [];
+      seatPairs = [];
       updateVipSeat();
       updateOrder();
     }
