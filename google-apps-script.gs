@@ -49,7 +49,7 @@ function setup() {
   var tiers = sheet_(ss, SHEETS.TIERS, ["id", "name", "price", "entry", "note", "allocation"]);
   if (tiers.getLastRow() < 2) {
     tiers.getRange(2, 1, 2, 6).setValues([
-      ["vip",   "VIP",                2295, "Early entry 5:00 PM", "Reserved seating · priority entry", 300],
+      ["vip",   "VIP",                2595, "Early entry 5:00 PM", "Reserved seating · priority entry", 300],
       ["genad", "General Admission",  1295, "Doors open after VIP", "Open seating",                     975]
     ]);
   }

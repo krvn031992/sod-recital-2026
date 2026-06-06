@@ -28,13 +28,13 @@
   /* ---------- Demo data when no backend is connected (preview) ---------- */
   function demo() {
     var rows = [
-      { orderId: "SOD-260601-AB12", timestamp: Date.now() - 86400000, studentName: "Maria Santos", studentClass: "Ballet Int.", studentBranch: "Main Branch", tier: "VIP", seats: "Orchestra Center A12–A13", qty: 2, unitPrice: 2295, ticketsSubtotal: 4590, addons: "1 × Shout-out", addonsTotal: 200, total: 4790, buyerName: "Ana Santos", email: "ana@email.com", phone: "0917 111 2222", payMethod: "gcash", receipt: "#", status: "Pending" },
+      { orderId: "SOD-260601-AB12", timestamp: Date.now() - 86400000, studentName: "Maria Santos", studentClass: "Ballet Int.", studentBranch: "Main Branch", tier: "VIP", seats: "Orchestra Center A12–A13", qty: 2, unitPrice: 2595, ticketsSubtotal: 5190, addons: "1 × Shout-out", addonsTotal: 200, total: 5390, buyerName: "Ana Santos", email: "ana@email.com", phone: "0917 111 2222", payMethod: "gcash", receipt: "#", status: "Pending" },
       { orderId: "SOD-260601-CD34", timestamp: Date.now() - 43200000, studentName: "Liam Cruz", studentClass: "Hip-Hop", studentBranch: "Branch 2", tier: "General Admission", seats: "", qty: 4, unitPrice: 1295, ticketsSubtotal: 5180, addons: "1 × T-Shirt (M); 1 × Bouquet", addonsTotal: 800, total: 5980, buyerName: "Jose Cruz", email: "jose@email.com", phone: "0918 333 4444", payMethod: "bpi", receipt: "#", status: "Confirmed" }
     ];
     var sold = {}; rows.forEach(function (r) { if (r.status !== "Rejected" && r.status !== "Cancelled") sold[r.tier] = (sold[r.tier] || 0) + r.qty; });
     return { ok: true, rows: rows, summary: {
       totalOrders: rows.length, byStatus: { Pending: 1, Confirmed: 1, Rejected: 0, Cancelled: 0 },
-      revenueConfirmed: 5980, revenuePending: 4790, soldByTier: sold,
+      revenueConfirmed: 5980, revenuePending: 5390, soldByTier: sold,
       remaining: { vip: 298, genad: 971 }, capacity: 1275,
       tiers: (CFG.tiers || [])
     }};

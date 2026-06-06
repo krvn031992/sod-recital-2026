@@ -48,7 +48,7 @@ window.SOD_CONFIG = {
     {
       id: "vip",
       name: "VIP",
-      price: 2295,
+      price: 2595,
       entry: "Early entry 5:00 PM",
       note: "Reserved seating · priority entry",
       allocation: 300                // 300 VIP seats only
