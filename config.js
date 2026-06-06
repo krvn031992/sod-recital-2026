@@ -21,8 +21,8 @@ window.SOD_CONFIG = {
   venueAddress: "CCP Complex, Pasay City",
   currency: "₱",                // Philippine Peso
 
-  /* ---- Branches (TODO: replace with your real branch names) ---- */
-  branches: ["Main Branch", "Branch 2", "Branch 3"],
+  /* ---- Branches ---- */
+  branches: ["BGC", "Manila", "Quezon City"],
 
   /* ---- Seat map ---- */
   seatMap: {
