@@ -7,8 +7,8 @@
   <meta name="description" content="Official recital ticket registration." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="assets/logo-icon.png" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -16,7 +16,7 @@
   <header class="topbar">
     <div class="wrap topbar__inner">
       <div class="brand">
-        <img class="brand__logo" src="logo.svg" alt="State of Dance logo" />
+        <img class="brand__logo" src="assets/logo-icon.png" alt="State of Dance logo" />
         <span class="brand__name" data-bind="org">State of Dance</span>
       </div>
       <a href="#tickets" class="btn btn--ghost btn--sm">Get Tickets</a>
@@ -26,7 +26,7 @@
   <!-- ===== Hero ===== -->
   <section class="hero">
     <div class="wrap hero__inner">
-      <img class="hero__logo" src="logo.svg" alt="State of Dance logo" />
+      <img class="hero__logo" src="assets/logo-white.png" alt="State of Dance logo" />
       <p class="eyebrow" data-bind="org">State of Dance</p>
       <h1 class="hero__title" data-bind="eventName">Annual Recital 2026</h1>
       <p class="hero__meta">
@@ -39,6 +39,29 @@
         <a href="#tiers" class="btn btn--ghost">View Pricing</a>
       </div>
       <div class="hero__status" data-status hidden></div>
+    </div>
+  </section>
+
+  <!-- ===== Poster showcase ===== -->
+  <section class="section section--alt">
+    <div class="wrap">
+      <div class="showcase">
+        <div class="showcase__frame">
+          <img src="assets/poster.jpg" alt="State of Dance Recital 2026 — Fantasy: A Decade of Non-Stop Moving official poster" loading="lazy" />
+        </div>
+        <div class="showcase__text">
+          <p class="eyebrow">The Production</p>
+          <h2>A Decade of Non-Stop Moving</h2>
+          <p>State of Dance Studio marks ten years of movement with <em>Fantasy</em> — a full-scale recital bringing every class and coach to one stage for an unforgettable night.</p>
+          <ul class="showcase__facts">
+            <li><span class="k">Show</span><span class="v">Fantasy — A Decade of Non-Stop Moving</span></li>
+            <li><span class="k">Date</span><span class="v">June 28, 2026 · 7:00 PM</span></li>
+            <li><span class="k">Venue</span><span class="v">Aliw Theater, CCP Complex, Pasay City</span></li>
+            <li><span class="k">VIP</span><span class="v">Early entry 5:00 PM · reserved seating</span></li>
+          </ul>
+          <a href="#tickets" class="btn btn--gold" style="margin-top:1.6rem;">Reserve Your Seats</a>
+        </div>
+      </div>
     </div>
   </section>
 
