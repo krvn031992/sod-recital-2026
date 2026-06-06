@@ -141,11 +141,18 @@
           </div>
           <p class="hint" data-limit-hint></p>
           <div class="vipseat" data-vipseat hidden>
-            <label class="field">
-              <span>Preferred VIP Seat(s) <em>*</em></span>
-              <input name="vipSeats" placeholder="e.g. Orchestra Center, Row A 12–13" />
-            </label>
-            <p class="hint">VIP is reserved seating — enter your preferred seat(s) using the <a href="#seatmap">seat map below</a>. We'll confirm your seats (or assign the nearest available) by email.</p>
+            <div class="vipseat__bar">
+              <span class="vipseat__title" data-seat-section>Choose your VIP seats</span>
+              <span class="vipseat__count"><b data-seat-count>0</b> / <span data-seat-need>0</span> selected</span>
+            </div>
+            <div class="seatpicker" data-seatpicker></div>
+            <div class="seat-legend">
+              <span><i class="dot dot--free"></i> Available</span>
+              <span><i class="dot dot--sel"></i> Selected</span>
+              <span><i class="dot dot--taken"></i> Taken</span>
+            </div>
+            <input type="hidden" name="vipSeats" />
+            <p class="hint">Click to choose your seat(s). Taken seats are greyed out. The stage is at the top.</p>
           </div>
         </fieldset>
 

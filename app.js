@@ -8,6 +8,7 @@
   "use strict";
 
   var CFG = window.SOD_CONFIG || {};
+  var selectedSeats = [];
   var $  = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
@@ -65,10 +66,62 @@
   function updateVipSeat() {
     var box = $("[data-vipseat]");
     if (!box) return;
-    var isVip = $("[data-tier-select]").value === "vip" && CFG.seatMap && CFG.seatMap.vipChooseSeats;
+    var sm = CFG.seatMap || {};
+    var isVip = $("[data-tier-select]").value === "vip" && sm.vipChooseSeats && sm.vipLayout;
     box.hidden = !isVip;
-    var input = box.querySelector('[name="vipSeats"]');
-    if (input) input.required = !!isVip;
+    if (!isVip) { selectedSeats = []; setSeatInput(); return; }
+    renderSeatPicker();
+  }
+
+  function takenMap() {
+    var taken = {};
+    (CFG.takenVipSeats || []).forEach(function (s) { taken[String(s).trim().toUpperCase()] = true; });
+    return taken;
+  }
+
+  function renderSeatPicker() {
+    var lay = CFG.seatMap.vipLayout;
+    var taken = takenMap();
+    var need = Number($("[data-qty-select]").value || 0);
+    setText("[data-seat-section]", lay.sectionLabel || "Choose your VIP seats");
+    setText("[data-seat-need]", need || 0);
+    // drop any selected seat that is now taken or beyond the needed count
+    selectedSeats = selectedSeats.filter(function (s) { return !taken[s.toUpperCase()]; });
+    if (need && selectedSeats.length > need) selectedSeats = selectedSeats.slice(0, need);
+
+    var html = '<div class="stage">S T A G E</div>';
+    (lay.rows || []).forEach(function (r) {
+      html += '<div class="seat-row"><span class="seat-rowlabel">' + esc(r) + "</span>";
+      for (var n = 1; n <= lay.seatsPerRow; n++) {
+        var label = r + n;
+        var st = taken[label.toUpperCase()] ? "taken" : (selectedSeats.indexOf(label) > -1 ? "sel" : "free");
+        html += '<button type="button" class="seat seat--' + st + '" data-seat="' + esc(label) + '"' +
+          (st === "taken" ? " disabled" : "") + ' title="' + esc(label) + '">' + n + "</button>";
+      }
+      html += "</div>";
+    });
+    var wrap = $("[data-seatpicker]");
+    wrap.innerHTML = html;
+    $$('[data-seatpicker] .seat:not(.seat--taken)').forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var label = btn.getAttribute("data-seat");
+        var idx = selectedSeats.indexOf(label);
+        var needNow = Number($("[data-qty-select]").value || 0);
+        if (idx > -1) selectedSeats.splice(idx, 1);
+        else {
+          if (!needNow || selectedSeats.length >= needNow) return; // choose qty first / at limit
+          selectedSeats.push(label);
+        }
+        renderSeatPicker(); setSeatInput(); updateOrder();
+      });
+    });
+    setSeatInput();
+  }
+
+  function setSeatInput() {
+    var inp = $('[name="vipSeats"]');
+    if (inp) inp.value = selectedSeats.join(", ");
+    setText("[data-seat-count]", selectedSeats.length);
   }
 
   function bindText() {
@@ -137,7 +190,7 @@
     var opts = '<option value="" disabled selected>Qty</option>';
     for (var i = 1; i <= limit; i++) opts += '<option value="' + i + '">' + i + '</option>';
     qty.innerHTML = opts;
-    qty.addEventListener("change", updateOrder);
+    qty.addEventListener("change", function () { updateVipSeat(); updateOrder(); });
     var hint = $("[data-limit-hint]");
     if (hint) hint.textContent = "Maximum " + limit + " tickets per student.";
   }
@@ -345,6 +398,9 @@
       var t = tierById(form.tier.value);
       var qty = Number(form.qty.value);
       if (!t || !qty) return fail("Please choose a ticket type and quantity.");
+      if (t.id === "vip" && CFG.seatMap && CFG.seatMap.vipChooseSeats && CFG.seatMap.vipLayout) {
+        if (selectedSeats.length !== qty) return fail("Please select exactly " + qty + " VIP seat(s) on the map.");
+      }
 
       btn.disabled = true;
       btn.textContent = "Submitting…";
@@ -381,6 +437,8 @@
       $("[data-order-id]").textContent = orderId;
       $("[data-modal]").hidden = false;
       form.reset();
+      selectedSeats = [];
+      updateVipSeat();
       updateOrder();
     }
   }

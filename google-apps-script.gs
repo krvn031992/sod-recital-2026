@@ -151,6 +151,20 @@ function readConfig_() {
 
   // Remaining seats per tier (allocation − confirmed/pending qty sold)
   out.remaining = remainingByTier_(ss, out.tiers);
+  out.takenVipSeats = takenSeats_(ss);
+  return out;
+}
+
+function takenSeats_(ss) {
+  var reg = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
+  var out = [];
+  for (var i = 1; i < reg.length; i++) {
+    var status = String(reg[i][18] || "").toLowerCase();
+    if (status === "cancelled" || status === "rejected") continue;
+    var seats = String(reg[i][9] || "").trim(); // Seat(s) column
+    if (!seats) continue;
+    seats.split(",").forEach(function (s) { s = s.trim(); if (s) out.push(s); });
+  }
   return out;
 }
 
@@ -198,6 +212,15 @@ function doPost(e) {
     }
     if ((cfg.remaining[tier.id] || 0) < qty) {
       return json_({ ok: false, error: "Not enough seats left in " + tier.name + "." });
+    }
+
+    // VIP seat conflict check (inside the lock = safe against double-booking)
+    if (tier.id === "vip" && data.seats) {
+      var want = String(data.seats).split(",").map(function (s) { return s.trim(); }).filter(String);
+      var takenSet = {};
+      takenSeats_(ss).forEach(function (s) { takenSet[s.toUpperCase()] = true; });
+      var clash = want.filter(function (s) { return takenSet[s.toUpperCase()]; });
+      if (clash.length) return json_({ ok: false, error: "Seat(s) already taken: " + clash.join(", ") + ". Please choose others." });
     }
 
     var orderId = makeOrderId_();
