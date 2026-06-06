@@ -74,6 +74,17 @@
     </div>
   </section>
 
+  <!-- ===== Seating map ===== -->
+  <section id="seatmap" class="section">
+    <div class="wrap">
+      <h2 class="section__title">Seating Map</h2>
+      <p class="section__sub">Aliw Theater · 1,275 seats. VIP is reserved seating with priority entry; General Admission is open seating.</p>
+      <figure class="seatmap">
+        <img src="assets/seatmap.png" alt="Aliw Theater seating map — 1,275 seats" loading="lazy" />
+      </figure>
+    </div>
+  </section>
+
   <!-- ===== Purchase form ===== -->
   <section id="tickets" class="section section--alt">
     <div class="wrap wrap--narrow">
@@ -93,8 +104,12 @@
               <input name="studentName" required autocomplete="off" />
             </label>
             <label class="field">
-              <span>Class / Level</span>
-              <input name="studentClass" placeholder="e.g. Ballet Intermediate" />
+              <span>Class</span>
+              <input name="studentClass" placeholder="e.g. Hip-Hop Kids" />
+            </label>
+            <label class="field">
+              <span>Branch <em>*</em></span>
+              <select name="studentBranch" data-branch-select required></select>
             </label>
             <label class="field">
               <span>Buyer / Parent Name <em>*</em></span>
@@ -125,6 +140,13 @@
             </label>
           </div>
           <p class="hint" data-limit-hint></p>
+          <div class="vipseat" data-vipseat hidden>
+            <label class="field">
+              <span>Preferred VIP Seat(s) <em>*</em></span>
+              <input name="vipSeats" placeholder="e.g. Orchestra Center, Row A 12–13" />
+            </label>
+            <p class="hint">VIP is reserved seating — enter your preferred seat(s) using the <a href="#seatmap">seat map below</a>. We'll confirm your seats (or assign the nearest available) by email.</p>
+          </div>
         </fieldset>
 
         <!-- Add-ons -->
@@ -165,9 +187,10 @@
             </label>
             <p class="addon__note" data-addon-note="flowers"></p>
             <div class="addon__body" data-addon-body="flowers" hidden>
+              <div class="addon__gallery" data-addon-gallery="flowers"></div>
               <div class="grid2">
                 <label class="field">
-                  <span>Choose flowers</span>
+                  <span>Choose a design</span>
                   <select name="flowersOption" data-addon-options="flowers"></select>
                 </label>
                 <label class="field">
@@ -191,6 +214,7 @@
             </label>
             <p class="addon__note" data-addon-note="shirt"></p>
             <div class="addon__body" data-addon-body="shirt" hidden>
+              <img class="addon__img" data-addon-image="shirt" alt="Event T-Shirt" hidden />
               <div class="grid2">
                 <label class="field">
                   <span>Size</span>
@@ -230,16 +254,11 @@
             </div>
           </div>
 
-          <div class="grid2">
-            <label class="field">
-              <span>Payment Reference No. <em>*</em></span>
-              <input name="reference" required placeholder="From your GCash / bank receipt" />
-            </label>
-            <label class="field">
-              <span>Proof of Payment <em>*</em></span>
-              <input name="receipt" type="file" accept="image/*,.pdf" required />
-            </label>
-          </div>
+          <label class="field">
+            <span>Screenshot of Payment <em>*</em></span>
+            <input name="receipt" type="file" accept="image/*,.pdf" required />
+          </label>
+          <p class="hint">Upload a clear screenshot of your GCash/BDO/BPI receipt — it already shows the reference number and amount, so that's all we need.</p>
         </fieldset>
 
         <label class="check">

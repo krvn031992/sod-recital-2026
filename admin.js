@@ -28,8 +28,8 @@
   /* ---------- Demo data when no backend is connected (preview) ---------- */
   function demo() {
     var rows = [
-      { orderId: "SOD-260601-AB12", timestamp: Date.now() - 86400000, studentName: "Maria Santos", studentClass: "Ballet Int.", buyerName: "Ana Santos", email: "ana@email.com", phone: "0917 111 2222", tier: "VIP", qty: 2, unitPrice: 2295, ticketsSubtotal: 4590, addons: "1 × Shout-out", addonsTotal: 200, total: 4790, payMethod: "gcash", reference: "GC123456", receipt: "#", status: "Pending" },
-      { orderId: "SOD-260601-CD34", timestamp: Date.now() - 43200000, studentName: "Liam Cruz", studentClass: "Hip-Hop", buyerName: "Jose Cruz", email: "jose@email.com", phone: "0918 333 4444", tier: "General Admission", qty: 4, unitPrice: 1295, ticketsSubtotal: 5180, addons: "1 × T-Shirt (M); 1 × Bouquet", addonsTotal: 800, total: 5980, payMethod: "bpi", reference: "BPI998877", receipt: "#", status: "Confirmed" }
+      { orderId: "SOD-260601-AB12", timestamp: Date.now() - 86400000, studentName: "Maria Santos", studentClass: "Ballet Int.", studentBranch: "Main Branch", tier: "VIP", seats: "Orchestra Center A12–A13", qty: 2, unitPrice: 2295, ticketsSubtotal: 4590, addons: "1 × Shout-out", addonsTotal: 200, total: 4790, buyerName: "Ana Santos", email: "ana@email.com", phone: "0917 111 2222", payMethod: "gcash", receipt: "#", status: "Pending" },
+      { orderId: "SOD-260601-CD34", timestamp: Date.now() - 43200000, studentName: "Liam Cruz", studentClass: "Hip-Hop", studentBranch: "Branch 2", tier: "General Admission", seats: "", qty: 4, unitPrice: 1295, ticketsSubtotal: 5180, addons: "1 × T-Shirt (M); 1 × Bouquet", addonsTotal: 800, total: 5980, buyerName: "Jose Cruz", email: "jose@email.com", phone: "0918 333 4444", payMethod: "bpi", receipt: "#", status: "Confirmed" }
     ];
     var sold = {}; rows.forEach(function (r) { if (r.status !== "Rejected" && r.status !== "Cancelled") sold[r.tier] = (sold[r.tier] || 0) + r.qty; });
     return { ok: true, rows: rows, summary: {
@@ -128,14 +128,15 @@
         td(o.orderId, "mono") +
         td(fmtDate(o.timestamp)) +
         td(o.studentName + (o.studentClass ? '<small> · ' + esc(o.studentClass) + "</small>" : ""), "", true) +
+        td(o.studentBranch || "—") +
         td(o.buyerName) +
         td('<a href="mailto:' + esc(o.email) + '">' + esc(o.email) + "</a><br><small>" + esc(o.phone) + "</small>", "", true) +
         td(o.tier) +
+        td(o.seats || "—") +
         td(o.qty) +
         td(o.addons ? esc(o.addons) + (o.addonsTotal ? '<br><small>' + peso(o.addonsTotal) + "</small>" : "") : "—", "", true) +
         td(peso(o.total)) +
         td(String(o.payMethod || "").toUpperCase()) +
-        td(o.reference, "mono") +
         td(o.receipt ? '<a href="' + esc(o.receipt) + '" target="_blank" rel="noopener">View</a>' : "—", "", true) +
         "<td>" + statusSelect(o) + "</td>" +
         "</tr>";
@@ -183,12 +184,12 @@
 
   /* ---------- Export CSV ---------- */
   function exportCsv() {
-    var cols = ["orderId", "timestamp", "studentName", "studentClass", "buyerName",
-      "email", "phone", "tier", "qty", "unitPrice", "ticketsSubtotal", "addons",
-      "addonsTotal", "total", "payMethod", "reference", "receipt", "status"];
-    var head = ["Order ID", "Timestamp", "Student", "Class", "Buyer", "Email", "Phone",
-      "Tier", "Qty", "Unit Price", "Tickets Subtotal", "Add-ons", "Add-ons Total",
-      "Grand Total", "Pay Method", "Reference", "Receipt", "Status"];
+    var cols = ["orderId", "timestamp", "studentName", "studentClass", "studentBranch", "buyerName",
+      "email", "phone", "tier", "seats", "qty", "unitPrice", "ticketsSubtotal", "addons",
+      "addonsTotal", "total", "payMethod", "receipt", "status"];
+    var head = ["Order ID", "Timestamp", "Student", "Class", "Branch", "Buyer", "Email", "Phone",
+      "Tier", "Seat(s)", "Qty", "Unit Price", "Tickets Subtotal", "Add-ons", "Add-ons Total",
+      "Grand Total", "Pay Method", "Receipt", "Status"];
     var esc2 = function (v) { return '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"'; };
     var lines = [head.map(esc2).join(",")];
     state.rows.forEach(function (o) { lines.push(cols.map(function (c) { return esc2(o[c]); }).join(",")); });

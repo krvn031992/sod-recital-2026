@@ -48,9 +48,27 @@
     renderStatus();
     renderTiers();
     renderTierSelect();
+    renderBranches();
     renderAddons();
     renderPayDetails();
     wireForm();
+  }
+
+  function renderBranches() {
+    var sel = $("[data-branch-select]");
+    if (!sel) return;
+    var list = (CFG.branches && CFG.branches.length) ? CFG.branches : ["Main Branch"];
+    sel.innerHTML = '<option value="" disabled selected>Select branch</option>' +
+      list.map(function (b) { return '<option value="' + esc(b) + '">' + esc(b) + "</option>"; }).join("");
+  }
+
+  function updateVipSeat() {
+    var box = $("[data-vipseat]");
+    if (!box) return;
+    var isVip = $("[data-tier-select]").value === "vip" && CFG.seatMap && CFG.seatMap.vipChooseSeats;
+    box.hidden = !isVip;
+    var input = box.querySelector('[name="vipSeats"]');
+    if (input) input.required = !!isVip;
   }
 
   function bindText() {
@@ -109,7 +127,8 @@
         return '<option value="' + t.id + '">' + esc(t.name) + ' — ' + peso(t.price) + '</option>';
       }).join("");
     fillQty();
-    sel.addEventListener("change", function () { fillQty(); updateOrder(); });
+    sel.addEventListener("change", function () { fillQty(); updateVipSeat(); updateOrder(); });
+    updateVipSeat();
   }
 
   function fillQty() {
@@ -177,6 +196,15 @@
       });
       fillSelect('[data-addon-options="flowers"]', opts);
       fillSelect('[data-addon-qty="flowers"]', range1(a.flowers.maxQty || 10));
+      var gal = $('[data-addon-gallery="flowers"]');
+      if (gal) {
+        gal.innerHTML = (a.flowers.options || []).filter(function (o) { return o.image; })
+          .map(function (o) {
+            return '<figure class="thumb"><img src="' + esc(o.image) + '" alt="' + esc(o.name) +
+              '" onerror="this.parentNode.style.display=&quot;none&quot;"/><figcaption>' +
+              esc(o.name) + " · " + peso(o.price) + "</figcaption></figure>";
+          }).join("");
+      }
     }
     // Shirt
     if (a.shirt && a.shirt.enabled) {
@@ -185,6 +213,8 @@
       setText('[data-addon-price="shirt"]', "+" + peso(a.shirt.price) + " each");
       fillSelect('[data-addon-sizes="shirt"]', (a.shirt.sizes || []).map(function (s) { return { value: s, label: s }; }));
       fillSelect('[data-addon-qty="shirt"]', range1(a.shirt.maxQty || 10));
+      var simg = $('[data-addon-image="shirt"]');
+      if (simg && a.shirt.image) { simg.onerror = function () { simg.hidden = true; }; simg.src = a.shirt.image; simg.hidden = false; }
     }
 
     wrap.hidden = !anyOn;
@@ -362,11 +392,13 @@
       timestamp: new Date().toISOString(),
       studentName: form.studentName.value.trim(),
       studentClass: form.studentClass.value.trim(),
+      studentBranch: form.studentBranch.value.trim(),
       buyerName: form.buyerName.value.trim(),
       email: form.email.value.trim(),
       phone: form.phone.value.trim(),
       tierId: t.id,
       tierName: t.name,
+      seats: (t.id === "vip" && form.vipSeats) ? form.vipSeats.value.trim() : "",
       unitPrice: t.price,
       qty: qty,
       ticketsSubtotal: ticketsSubtotal,
@@ -374,8 +406,7 @@
       addonsText: addons.text,
       addonsTotal: addons.total,
       grandTotal: ticketsSubtotal + addons.total,
-      payMethod: form.payMethod.value,
-      reference: form.reference.value.trim()
+      payMethod: form.payMethod.value
     };
     var file = form.receipt.files[0];
     if (!file) return Promise.resolve(base);

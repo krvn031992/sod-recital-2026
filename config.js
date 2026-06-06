@@ -21,6 +21,15 @@ window.SOD_CONFIG = {
   venueAddress: "CCP Complex, Pasay City",
   currency: "₱",                // Philippine Peso
 
+  /* ---- Branches (TODO: replace with your real branch names) ---- */
+  branches: ["Main Branch", "Branch 2", "Branch 3"],
+
+  /* ---- Seat map ---- */
+  seatMap: {
+    image: "assets/seatmap.png",   // Aliw Theater overview
+    vipChooseSeats: true           // VIP buyers enter preferred seat(s)
+  },
+
   /* ---- Editable settings (Config tab overrides these) ---- */
   salesOpen: false,                  // open/close registration
   ticketLimitPerStudent: 4,          // max tickets per student
@@ -60,19 +69,21 @@ window.SOD_CONFIG = {
     flowers: {
       enabled: true,
       label: "Flowers for the Dancer",
-      note: "A bouquet handed to your dancer on stage.",
+      note: "Choose a flower design to be handed to your dancer on stage.",
       maxQty: 10,
+      // TODO: edit these designs/prices, and add an image per design (assets/...)
       options: [
-        { id: "rose",    name: "Single Rose",     price: 150 },  // TODO: confirm price
-        { id: "bouquet", name: "Bouquet",         price: 350 },  // TODO: confirm price
-        { id: "premium", name: "Premium Bouquet", price: 650 }   // TODO: confirm price
+        { id: "rose",    name: "Single Rose",     price: 150, image: "" },
+        { id: "bouquet", name: "Bouquet",         price: 350, image: "" },
+        { id: "premium", name: "Premium Bouquet", price: 650, image: "" }
       ]
     },
     shirt: {
       enabled: true,
       label: "Event T-Shirt",
-      price: 450,                                                 // TODO: confirm price
+      price: 750,
       note: "Fantasy 2026 souvenir shirt.",
+      image: "assets/shirt.png",                                  // drop your shirt photo here
       sizes: ["XS", "S", "M", "L", "XL", "2XL"],
       maxQty: 10
     }

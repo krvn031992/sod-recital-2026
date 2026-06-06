@@ -7,9 +7,13 @@ backend (free) for tracking registrations and exporting payments.
 ## What it does
 - VIP & General Admission tiers (prices, entry times, seat counts)
 - Per-student ticket limit (default 4) — editable
-- Optional **add-on upsells**: Dancer Shout-out (₱200), Flowers, Event T-Shirt
-  — all priced/edited in `config.js` (`addons`) and tracked per order
-- Manual payment via **GCash, BDO, BPI** with reference no. + **required proof-of-payment upload**
+- Optional **add-on upsells**: Dancer Shout-out (₱200), Flowers (choose a
+  design), Event T-Shirt (₱750, with photo) — priced/edited in `config.js`
+  (`addons`) and tracked per order
+- **Seat map** display (Aliw Theater); VIP buyers enter preferred seat(s)
+- Student **Class + Branch** capture (branches editable in `config.js`)
+- Manual payment via **GCash, BDO, BPI** with a **required payment screenshot**
+  (no separate reference number — the screenshot already shows it)
 - Open / close registration switch
 - **Auto-confirmation email** sent to each buyer on submit
 - Every registration logged to a Google Sheet → one-click export

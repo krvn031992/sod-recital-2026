@@ -52,10 +52,10 @@ function setup() {
   }
 
   sheet_(ss, SHEETS.REG, [
-    "Order ID", "Timestamp", "Student Name", "Class/Level", "Buyer Name",
-    "Email", "Phone", "Tier", "Qty", "Unit Price", "Tickets Subtotal",
+    "Order ID", "Timestamp", "Student Name", "Class", "Branch", "Buyer Name",
+    "Email", "Phone", "Tier", "Seat(s)", "Qty", "Unit Price", "Tickets Subtotal",
     "Add-ons", "Add-ons Total", "Grand Total",
-    "Pay Method", "Reference No.", "Receipt", "Status"
+    "Pay Method", "Receipt", "Status"
   ]);
 }
 
@@ -95,11 +95,11 @@ function adminData_() {
     var r = values[i];
     if (!r[0]) continue;
     rows.push({
-      orderId: r[0], timestamp: r[1], studentName: r[2], studentClass: r[3],
-      buyerName: r[4], email: r[5], phone: r[6], tier: r[7], qty: Number(r[8]),
-      unitPrice: Number(r[9]), ticketsSubtotal: Number(r[10]),
-      addons: r[11], addonsTotal: Number(r[12]), total: Number(r[13]),
-      payMethod: r[14], reference: r[15], receipt: r[16], status: r[17] || "Pending"
+      orderId: r[0], timestamp: r[1], studentName: r[2], studentClass: r[3], studentBranch: r[4],
+      buyerName: r[5], email: r[6], phone: r[7], tier: r[8], seats: r[9], qty: Number(r[10]),
+      unitPrice: Number(r[11]), ticketsSubtotal: Number(r[12]),
+      addons: r[13], addonsTotal: Number(r[14]), total: Number(r[15]),
+      payMethod: r[16], receipt: r[17], status: r[18] || "Pending"
     });
   }
   var cfg = readConfig_();
@@ -158,10 +158,10 @@ function remainingByTier_(ss, tiers) {
   var reg = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
   var sold = {};
   for (var i = 1; i < reg.length; i++) {
-    var status = String(reg[i][17] || "").toLowerCase();
+    var status = String(reg[i][18] || "").toLowerCase();
     if (status === "cancelled" || status === "rejected") continue;
-    var tier = String(reg[i][7]);
-    sold[tier] = (sold[tier] || 0) + Number(reg[i][8] || 0);
+    var tier = String(reg[i][8]);
+    sold[tier] = (sold[tier] || 0) + Number(reg[i][10] || 0);
   }
   var rem = {};
   tiers.forEach(function (t) {
@@ -209,10 +209,10 @@ function doPost(e) {
     var grandTotal = ticketsSubtotal + addonsTotal;
 
     ss.getSheetByName(SHEETS.REG).appendRow([
-      orderId, data.timestamp || new Date(), data.studentName, data.studentClass,
-      data.buyerName, data.email, data.phone, tier.name, qty, tier.price,
+      orderId, data.timestamp || new Date(), data.studentName, data.studentClass, data.studentBranch,
+      data.buyerName, data.email, data.phone, tier.name, data.seats || "", qty, tier.price,
       ticketsSubtotal, data.addonsText || "", addonsTotal, grandTotal,
-      data.payMethod, data.reference, receiptLink, "Pending"
+      data.payMethod, receiptLink, "Pending"
     ]);
 
     sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal);
@@ -231,7 +231,7 @@ function updateStatus_(ss, orderId, status) {
   var ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
   for (var i = 1; i < ids.length; i++) {
     if (String(ids[i][0]) === String(orderId)) {
-      sh.getRange(i + 1, 18).setValue(status); // column 18 = Status
+      sh.getRange(i + 1, 19).setValue(status); // column 19 = Status
       return { ok: true, orderId: orderId, status: status };
     }
   }
@@ -259,11 +259,12 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
       "Hi " + (data.buyerName || "there") + ",\n\n" +
       "We've received your registration for " + (cfg.eventName || "the recital") + ".\n" +
       "Reference No: " + orderId + "\n\n" +
-      "  Student: " + data.studentName + "\n" +
+      "  Student: " + data.studentName + (data.studentBranch ? " (" + data.studentBranch + ")" : "") + "\n" +
       "  Ticket:  " + qty + " x " + tier.name + " (" + peso + (tier.price * qty).toLocaleString() + ")\n" +
+      (data.seats ? "  Seat(s): " + data.seats + "\n" : "") +
       addonLine +
       "  TOTAL:   " + peso + Number(grandTotal || tier.price * qty).toLocaleString() + "\n" +
-      "  Payment: " + String(data.payMethod).toUpperCase() + " · Ref " + data.reference + "\n\n" +
+      "  Payment: " + String(data.payMethod).toUpperCase() + " (screenshot submitted)\n\n" +
       "Status: PENDING VERIFICATION. We'll review your proof of payment and " +
       "confirm your seat(s) in a follow-up message. VIP seat assignments are sent upon confirmation.\n\n" +
       (cfg.eventDate ? "Show date: " + cfg.eventDate + "\n" : "") +

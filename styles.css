@@ -193,6 +193,19 @@ a { color: inherit; }
 .addon__price { color: var(--gold); font-weight: 700; font-size: .9rem; }
 .addon__note { margin: .4rem 0 0 1.8rem; font-size: .85rem; color: var(--text-soft); }
 .addon__body { margin-top: 1rem; }
+.addon__img { display: block; width: 100%; max-width: 260px; border-radius: var(--radius-sm); border: 1px solid var(--line); margin-bottom: 1rem; }
+.addon__gallery { display: flex; gap: .7rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.thumb { margin: 0; width: 108px; }
+.thumb img { width: 108px; height: 108px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); display: block; }
+.thumb figcaption { font-size: .72rem; color: var(--text-soft); margin-top: .3rem; text-align: center; }
+
+/* ---- VIP seat selection ---- */
+.vipseat { margin-top: 1.1rem; padding: 1.1rem; border: 1px dashed var(--gold); border-radius: var(--radius-sm); background: rgba(222,176,96,.05); }
+.vipseat a { color: var(--gold); }
+
+/* ---- Seat map ---- */
+.seatmap { margin: 0 auto; max-width: 780px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); box-shadow: var(--shadow); background: #fff; }
+.seatmap img { display: block; width: 100%; height: auto; }
 
 /* ---- Order summary ---- */
 .order { background: linear-gradient(135deg, var(--aub-700), var(--aub-600)); border: 1px solid rgba(222,176,96,.35); color: #fff; border-radius: var(--radius-sm); padding: 1.1rem 1.3rem; margin-bottom: 1.2rem; }
