@@ -4,3 +4,5 @@ node_modules/
 .vscode/
 .idea/
 assets/_*
+# The CEO dashboard is its own app + git repo (sod-dashboard); ignore it here.
+dashboard/

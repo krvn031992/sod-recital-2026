@@ -32,8 +32,10 @@ backend (free) for tracking registrations and exporting payments.
 1. Create a new **Google Sheet**.
 2. **Extensions → Apps Script**. Delete the sample code.
 3. Paste in everything from `google-apps-script.gs`. **Save**.
-   Then change `ADMIN_KEY = "CHANGE-THIS-PASSWORD"` near the top to your
-   own secret password (this is your admin dashboard login).
+   Then in the `ADMIN_KEYS = [ ... ]` list near the top, replace
+   `"CHANGE-THIS-PASSWORD"` with your own secret password (this is your
+   admin dashboard login). Add more passwords to the list to grant other
+   admins access.
 4. Pick the `setup` function in the toolbar and click **Run** once
    (authorize when prompted). This builds 3 tabs: **Config**, **Tiers**,
    **Registrations**.
@@ -77,7 +79,17 @@ with your `ADMIN_KEY` password. From there you can:
 - **Export CSV** of all payments with one click
 
 The admin page is not linked from the public site and is password-gated,
-but treat the URL as semi-private and keep your `ADMIN_KEY` strong.
+but treat the URL as semi-private and keep your passwords strong.
+
+### Adding more admins
+Two ways to let other people track tickets:
+1. **Dashboard login (recommended):** in the Apps Script, add their own
+   password to the `ADMIN_KEYS = [ ... ]` list, **Save**, then
+   **Deploy → Manage deployments → ✏️ → New version → Deploy**. They log
+   into `admin.html` with that password.
+2. **Direct Sheet access:** in the Google Sheet click **Share** and add
+   their Google account (Editor). They can view every registration, mark
+   statuses, and export — full backend access, no password needed.
 
 ## Exporting payments
 From the **admin dashboard**: click **Export CSV**.

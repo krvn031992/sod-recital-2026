@@ -242,6 +242,15 @@ a { color: inherit; }
 .seatmap img { display: block; width: 100%; height: auto; }
 .seatmap figcaption { color: var(--text-soft); font-size: .82rem; margin-top: .7rem; }
 
+/* ---- VIP availability panel ---- */
+.vip-availability { max-width: 820px; margin: 1.6rem auto 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem 1.5rem; box-shadow: var(--shadow-sm); }
+.va__title { margin: 0 0 .3rem; color: var(--gold); font-size: 1.1rem; }
+.va__count { margin: 0 0 .6rem; color: var(--text); font-size: .95rem; }
+.va__count b { color: var(--gold); font-size: 1.3rem; font-family: var(--font-display); }
+.va__label { margin: .6rem 0 .5rem; color: var(--text-soft); font-size: .85rem; font-weight: 600; }
+.va__none { margin: 0; color: var(--ok); font-weight: 600; }
+.va__chips { display: flex; flex-wrap: wrap; gap: .35rem; max-height: 180px; overflow-y: auto; }
+
 /* ---- Order summary ---- */
 .order { background: linear-gradient(135deg, var(--aub-700), var(--aub-600)); border: 1px solid rgba(222,176,96,.35); color: #fff; border-radius: var(--radius-sm); padding: 1.1rem 1.3rem; margin-bottom: 1.2rem; }
 .order__lines { display: flex; flex-direction: column; gap: .35rem; margin-bottom: .6rem; }

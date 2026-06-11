@@ -47,6 +47,7 @@
   function render() {
     bindText();
     renderStatus();
+    renderVipAvailability();
     renderTiers();
     renderTierSelect();
     renderBranches();
@@ -83,13 +84,41 @@
     return t;
   }
 
+  function seatSort(a, b) {
+    function p(s) { var m = String(s).match(/^([A-Za-z]*)(\d*)/); return [(m[1] || "").toUpperCase(), parseInt(m[2] || "0", 10)]; }
+    var pa = p(a), pb = p(b);
+    return pa[0] < pb[0] ? -1 : pa[0] > pb[0] ? 1 : pa[1] - pb[1];
+  }
+
+  function vipTier() { return (CFG.tiers || []).filter(function (t) { return t.id === "vip"; })[0]; }
+
   function renderTakenList() {
     var box = $("[data-taken-list]");
     if (!box) return;
-    var t = (CFG.takenVipSeats || []).slice().sort();
+    var t = (CFG.takenVipSeats || []).slice().sort(seatSort);
     if (!t.length) { box.innerHTML = '<span class="taken__none">No VIP seats taken yet — you have first pick!</span>'; return; }
     box.innerHTML = '<span class="taken__label">Already taken:</span> ' +
       t.map(function (s) { return '<span class="taken__chip">' + esc(s) + "</span>"; }).join("");
+  }
+
+  function renderVipAvailability() {
+    var box = $("[data-vip-availability]");
+    if (!box) return;
+    var vt = vipTier();
+    if (!vt) { box.hidden = true; return; }
+    box.hidden = false;
+    var cap = vt.allocation || 300;
+    var taken = (CFG.takenVipSeats || []).slice().sort(seatSort);
+    var remain = (CFG.remaining && CFG.remaining.vip != null) ? CFG.remaining.vip : (cap - taken.length);
+    var html = '<h3 class="va__title">VIP Seat Availability</h3>' +
+      '<p class="va__count"><b>' + remain + "</b> of " + cap + " VIP seats available</p>";
+    if (taken.length) {
+      html += '<p class="va__label">Already taken — please don\'t book these:</p>' +
+        '<div class="va__chips">' + taken.map(function (s) { return '<span class="taken__chip">' + esc(s) + "</span>"; }).join("") + "</div>";
+    } else {
+      html += '<p class="va__none">🎉 All VIP seats are currently available.</p>';
+    }
+    box.innerHTML = html;
   }
 
   function captureSeatPairs() {

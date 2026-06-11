@@ -23,9 +23,16 @@
 var SHEETS = { CONFIG: "Config", TIERS: "Tiers", REG: "Registrations" };
 var RECEIPTS_FOLDER = "Recital Receipts";
 
-/* IMPORTANT: change this to your own secret password before deploying.
-   You'll type the same password to log into the admin dashboard.        */
-var ADMIN_KEY = "CHANGE-THIS-PASSWORD";
+/* ADMIN PASSWORDS — anyone with one of these can log into admin.html and
+   track tickets. To add another admin, add their own password on a new
+   line (keep the commas). Replace the first one with YOUR password.
+   Keep these strong and private. After editing, redeploy a New version.  */
+var ADMIN_KEYS = [
+  "CHANGE-THIS-PASSWORD"          // <- your password
+  // , "another-admin-password"   // <- uncomment & set to add an admin
+  // , "third-admin-password"
+];
+function isAdmin_(k) { return ADMIN_KEYS.indexOf(String(k)) !== -1; }
 
 /* Your public site URL (used for the ticket/QR link in emails). */
 var SITE_URL = "https://krvn031992.github.io/sod-recital-2026";
@@ -78,7 +85,7 @@ function doGet(e) {
     setup(); // ensure tabs exist
     var action = (e && e.parameter && e.parameter.action) || "config";
     if (action === "admin") {
-      if (!e.parameter || e.parameter.key !== ADMIN_KEY) {
+      if (!e.parameter || !isAdmin_(e.parameter.key)) {
         return json_({ ok: false, error: "Unauthorized" });
       }
       return json_(adminData_());
@@ -220,7 +227,7 @@ function doPost(e) {
 
     // Admin action: update a registration's status
     if (data.type === "updateStatus") {
-      if (data.key !== ADMIN_KEY) return json_({ ok: false, error: "Unauthorized" });
+      if (!isAdmin_(data.key)) return json_({ ok: false, error: "Unauthorized" });
       return json_(updateStatus_(ss, data.orderId, data.status));
     }
 

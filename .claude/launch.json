@@ -6,6 +6,18 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8123"],
       "port": 8123
+    },
+    {
+      "name": "sod-dashboard",
+      "runtimeExecutable": "/Users/kervinwilmendiola/.local/node/bin/node",
+      "runtimeArgs": [
+        "dashboard/node_modules/vite/bin/vite.js",
+        "dashboard",
+        "--port",
+        "5180",
+        "--strictPort"
+      ],
+      "port": 5180
     }
   ]
 }
