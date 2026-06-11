@@ -40,6 +40,7 @@
     if (Array.isArray(remote.tiers) && remote.tiers.length) out.tiers = remote.tiers;
     if (remote.payments) out.payments = Object.assign({}, base.payments, remote.payments);
     if (remote.remaining) out.remaining = remote.remaining; // { tierId: count }
+    if (Array.isArray(remote.takenVipSeats)) out.takenVipSeats = remote.takenVipSeats;
     return out;
   }
 
