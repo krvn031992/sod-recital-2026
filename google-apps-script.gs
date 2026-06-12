@@ -41,7 +41,7 @@ var SITE_URL = "https://krvn031992.github.io/sod-recital-2026";
    IMPORTANT: this address must be the account that owns this script, OR a
    verified "Send mail as" alias on that account (Gmail → Settings →
    Accounts → Send mail as). Otherwise Google blocks it. */
-var SENDER_EMAIL = "marketing@stateofdance.co";
+var SENDER_EMAIL = "kervin@stateofdance.co";
 var SENDER_NAME  = "State of Dance Studio";
 
 /* ---------- One-time setup: build the tabs with defaults ---------- */
