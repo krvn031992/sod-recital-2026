@@ -22,6 +22,7 @@
 
 var SHEETS = { CONFIG: "Config", TIERS: "Tiers", REG: "Registrations" };
 var RECEIPTS_FOLDER = "Recital Receipts";
+var STATUS_COL = 19; // Registrations "Status" column
 
 /* ADMIN PASSWORDS — anyone with one of these can log into admin.html and
    track tickets. To add another admin, add their own password on a new
@@ -293,11 +294,72 @@ function updateStatus_(ss, orderId, status) {
   var ids = sh.getRange(1, 1, sh.getLastRow(), 1).getValues();
   for (var i = 1; i < ids.length; i++) {
     if (String(ids[i][0]) === String(orderId)) {
-      sh.getRange(i + 1, 19).setValue(status); // column 19 = Status
+      var prev = String(sh.getRange(i + 1, STATUS_COL).getValue());
+      sh.getRange(i + 1, STATUS_COL).setValue(status);
+      if (status === "Confirmed" && prev !== "Confirmed") {
+        sendConfirmedEmail_(sh.getRange(i + 1, 1, 1, STATUS_COL).getValues()[0]);
+      }
       return { ok: true, orderId: orderId, status: status };
     }
   }
   return { ok: false, error: "Order not found." };
+}
+
+/* ---------- "Payment confirmed" email ---------- */
+function sendConfirmedEmail_(r) {
+  var email = r[6]; // Email column
+  if (!email) return "no email";
+  try {
+    var cfg = readConfig_();
+    var peso = "₱";
+    var orderId = r[0], student = r[2], branch = r[4], buyer = r[5];
+    var tier = r[8], seats = r[9], qty = r[10], grand = r[15];
+    var subject = "Payment confirmed ✓ — " + (cfg.eventName || "Recital") + " (" + orderId + ")";
+    var body =
+      "Hi " + (buyer || "there") + ",\n\n" +
+      "Great news — your payment is CONFIRMED and your seat(s) are reserved. 🎉\n\n" +
+      "  Reference: " + orderId + "\n" +
+      "  Student: " + student + (branch ? " (" + branch + ")" : "") + "\n" +
+      "  Ticket:  " + qty + " x " + tier + "\n" +
+      (seats ? "  Seat(s): " + seats + "\n" : "") +
+      "  Total Paid: " + peso + Number(grand || 0).toLocaleString() + "\n\n" +
+      "Present this QR at the venue for entry:\n" + SITE_URL + "/verify.html?id=" + orderId + "\n\n" +
+      (cfg.eventDate ? "Show: " + cfg.eventDate + "\n" : "") +
+      (cfg.venue ? "Venue: " + cfg.venue + "\n\n" : "\n") +
+      "See you at the show!\n— State of Dance Studio";
+    var opts = { name: SENDER_NAME };
+    var from = senderFrom_();
+    if (from) opts.from = from;
+    GmailApp.sendEmail(email, subject, body, opts);
+    return "";
+  } catch (err) { Logger.log("Confirmed email failed: " + err); return String(err); }
+}
+
+/* Fires when the Status cell is edited in the Sheet. Sends the confirmed
+   email when a row is changed to "Confirmed". Installed via installTriggers(). */
+function onStatusEdit(e) {
+  try {
+    if (!e || !e.range) return;
+    var sh = e.range.getSheet();
+    if (sh.getName() !== SHEETS.REG) return;
+    if (e.range.getColumn() !== STATUS_COL || e.range.getRow() < 2) return;
+    var newVal = String(e.value || "").trim().toLowerCase();
+    var oldVal = String(e.oldValue || "").trim().toLowerCase();
+    if (newVal !== "confirmed" || oldVal === "confirmed") return;
+    var row = sh.getRange(e.range.getRow(), 1, 1, STATUS_COL).getValues()[0];
+    sendConfirmedEmail_(row);
+  } catch (err) { Logger.log("onStatusEdit error: " + err); }
+}
+
+/* Run this ONCE from the editor to enable the "confirmed" email when you
+   edit the Status cell directly in the Sheet. */
+function installTriggers() {
+  var ss = SpreadsheetApp.getActive();
+  ScriptApp.getProjectTriggers().forEach(function (t) {
+    if (t.getHandlerFunction() === "onStatusEdit") ScriptApp.deleteTrigger(t);
+  });
+  ScriptApp.newTrigger("onStatusEdit").forSpreadsheet(ss).onEdit().create();
+  Logger.log("Installed onStatusEdit trigger — confirmed emails will fire on Status edits.");
 }
 
 function saveReceipt_(orderId, data) {
