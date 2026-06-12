@@ -37,6 +37,13 @@ function isAdmin_(k) { return ADMIN_KEYS.indexOf(String(k)) !== -1; }
 /* Your public site URL (used for the ticket/QR link in emails). */
 var SITE_URL = "https://krvn031992.github.io/sod-recital-2026";
 
+/* Confirmation emails are sent FROM this address with this display name.
+   IMPORTANT: this address must be the account that owns this script, OR a
+   verified "Send mail as" alias on that account (Gmail → Settings →
+   Accounts → Send mail as). Otherwise Google blocks it. */
+var SENDER_EMAIL = "marketing@stateofdance.co";
+var SENDER_NAME  = "State of Dance Studio";
+
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -327,7 +334,7 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
       (cfg.venue ? "Venue: " + cfg.venue + "\n\n" : "\n") +
       "Please keep this email and your receipt.\n\n" +
       "— State of Dance Studio";
-    MailApp.sendEmail({ to: data.email, subject: subject, body: body, name: "State of Dance Studio" });
+    GmailApp.sendEmail(data.email, subject, body, { from: SENDER_EMAIL, name: SENDER_NAME });
     return ""; // success
   } catch (err) {
     // Email failure must not block the registration; it's already saved.
@@ -342,10 +349,11 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
    buyer confirmation emails will work. Then redeploy a New version.        */
 function testEmail() {
   var to = Session.getActiveUser().getEmail();
-  MailApp.sendEmail({ to: to, subject: "State of Dance — email test ✓",
-    body: "If you received this, your registration confirmation emails are now working.",
-    name: "State of Dance Studio" });
-  Logger.log("Test email sent to " + to);
+  Logger.log("Aliases available to send-as: " + GmailApp.getAliases().join(", "));
+  GmailApp.sendEmail(to, "State of Dance — email test ✓",
+    "If you received this (from " + SENDER_EMAIL + "), confirmation emails are working.",
+    { from: SENDER_EMAIL, name: SENDER_NAME });
+  Logger.log("Test email sent to " + to + " from " + SENDER_EMAIL);
 }
 
 function makeOrderId_() {
