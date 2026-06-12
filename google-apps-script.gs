@@ -45,7 +45,7 @@ function setup() {
   if (cfg.getLastRow() < 2) {
     cfg.getRange(2, 1, 6, 2).setValues([
       ["salesOpen", false],
-      ["ticketLimitPerStudent", 4],
+      ["ticketLimitPerStudent", 5],
       ["totalCapacity", 1275],
       ["eventName", "Fantasy — A Decade of Non-Stop Moving"],
       ["eventDate", "June 28, 2026 · 7:00 PM"],
@@ -270,8 +270,8 @@ function doPost(e) {
       data.payMethod, receiptLink, "Pending"
     ]);
 
-    sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal);
-    return json_({ ok: true, orderId: orderId });
+    var emailErr = sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal);
+    return json_({ ok: true, orderId: orderId, emailSent: !emailErr, emailError: emailErr || "" });
   } catch (err) {
     return json_({ ok: false, error: String(err) });
   } finally {
@@ -305,7 +305,7 @@ function saveReceipt_(orderId, data) {
 
 /* ---------- Auto-confirmation email to the buyer ---------- */
 function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTotal) {
-  if (!data.email) return;
+  if (!data.email) return "no buyer email";
   try {
     var peso = "₱";
     var addonLine = (data.addonsText) ? "  Add-ons: " + data.addonsText + " (" + peso + Number(addonsTotal || 0).toLocaleString() + ")\n" : "";
@@ -328,9 +328,24 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
       "Please keep this email and your receipt.\n\n" +
       "— State of Dance Studio";
     MailApp.sendEmail({ to: data.email, subject: subject, body: body, name: "State of Dance Studio" });
+    return ""; // success
   } catch (err) {
     // Email failure must not block the registration; it's already saved.
+    Logger.log("Email failed: " + err);
+    return String(err);
   }
+}
+
+/* ---------- Run this ONCE from the editor to enable email sending ----------
+   Pick "testEmail" in the function dropdown and click Run. Approve the
+   Gmail permission when asked. You'll receive a test email — after that,
+   buyer confirmation emails will work. Then redeploy a New version.        */
+function testEmail() {
+  var to = Session.getActiveUser().getEmail();
+  MailApp.sendEmail({ to: to, subject: "State of Dance — email test ✓",
+    body: "If you received this, your registration confirmation emails are now working.",
+    name: "State of Dance Studio" });
+  Logger.log("Test email sent to " + to);
 }
 
 function makeOrderId_() {

@@ -32,7 +32,7 @@ window.SOD_CONFIG = {
 
   /* ---- Editable settings (Config tab overrides these) ---- */
   salesOpen: false,                  // open/close registration
-  ticketLimitPerStudent: 4,          // max tickets per student
+  ticketLimitPerStudent: 5,          // max tickets per student
   totalCapacity: 1275,               // total seats in the theatre
 
   /* ---- Ticket tiers (Tiers tab overrides these) ----
