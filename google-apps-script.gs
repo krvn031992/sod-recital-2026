@@ -334,7 +334,10 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
       (cfg.venue ? "Venue: " + cfg.venue + "\n\n" : "\n") +
       "Please keep this email and your receipt.\n\n" +
       "— State of Dance Studio";
-    GmailApp.sendEmail(data.email, subject, body, { from: SENDER_EMAIL, name: SENDER_NAME });
+    var opts = { name: SENDER_NAME };
+    var from = senderFrom_();
+    if (from) opts.from = from;
+    GmailApp.sendEmail(data.email, subject, body, opts);
     return ""; // success
   } catch (err) {
     // Email failure must not block the registration; it's already saved.
@@ -347,13 +350,29 @@ function sendConfirmation_(cfg, data, tier, qty, orderId, addonsTotal, grandTota
    Pick "testEmail" in the function dropdown and click Run. Approve the
    Gmail permission when asked. You'll receive a test email — after that,
    buyer confirmation emails will work. Then redeploy a New version.        */
+/* Returns the "from" address to use: null if SENDER_EMAIL is the owner's
+   primary address (no override needed), the alias if it's a verified
+   send-as alias, or null (falls back to primary) if neither. */
+function senderFrom_() {
+  try {
+    var me = String(Session.getActiveUser().getEmail() || "").toLowerCase();
+    if (SENDER_EMAIL && SENDER_EMAIL.toLowerCase() === me) return null; // owner = sender
+    var aliases = GmailApp.getAliases() || [];
+    return (aliases.indexOf(SENDER_EMAIL) !== -1) ? SENDER_EMAIL : null;
+  } catch (e) { return null; }
+}
+
 function testEmail() {
   var to = Session.getActiveUser().getEmail();
-  Logger.log("Aliases available to send-as: " + GmailApp.getAliases().join(", "));
+  Logger.log("Running as: " + to);
+  Logger.log("Send-as aliases: " + (GmailApp.getAliases() || []).join(", "));
+  var opts = { name: SENDER_NAME };
+  var from = senderFrom_();
+  if (from) opts.from = from;
   GmailApp.sendEmail(to, "State of Dance — email test ✓",
-    "If you received this (from " + SENDER_EMAIL + "), confirmation emails are working.",
-    { from: SENDER_EMAIL, name: SENDER_NAME });
-  Logger.log("Test email sent to " + to + " from " + SENDER_EMAIL);
+    "If you received this, confirmation emails are working. Sender resolves to: " + (from || to),
+    opts);
+  Logger.log("Test email sent to " + to + " (from " + (from || to) + ")");
 }
 
 function makeOrderId_() {
