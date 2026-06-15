@@ -330,6 +330,13 @@
       fillSelect('[data-addon-qty="shirt"]', range1(a.shirt.maxQty || 10));
       var simg = $('[data-addon-image="shirt"]');
       if (simg && a.shirt.image) { simg.onerror = function () { simg.hidden = true; }; simg.src = a.shirt.image; simg.hidden = false; }
+      var sc = $('[data-addon-sizechart="shirt"]');
+      if (sc && a.shirt.sizeChart) {
+        var scImg = sc.querySelector("img");
+        scImg.onerror = function () { sc.hidden = true; };
+        scImg.src = a.shirt.sizeChart;
+        sc.hidden = false;
+      }
     }
 
     wrap.hidden = !anyOn;

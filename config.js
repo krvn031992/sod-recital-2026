@@ -67,24 +67,16 @@ window.SOD_CONFIG = {
       maxQty: 5
     },
     flowers: {
-      enabled: true,
-      label: "Flowers for the Dancer",
-      note: "Choose a flower design to be handed to your dancer on stage.",
-      maxQty: 10,
-      // TODO: edit these designs/prices, and add an image per design (assets/...)
-      options: [
-        { id: "rose",    name: "Single Rose",     price: 150, image: "" },
-        { id: "bouquet", name: "Bouquet",         price: 350, image: "" },
-        { id: "premium", name: "Premium Bouquet", price: 650, image: "" }
-      ]
+      enabled: false              // removed
     },
     shirt: {
       enabled: true,
       label: "Event T-Shirt",
       price: 750,
-      note: "Fantasy 2026 souvenir shirt.",
-      image: "assets/shirt.png",                                  // drop your shirt photo here
-      sizes: ["XS", "S", "M", "L", "XL", "2XL"],
+      note: "Official Fantasy 2026 souvenir shirt — see the size chart below.",
+      image: "assets/shirt.png",
+      sizeChart: "assets/shirt-sizes.png",
+      sizes: ["S", "M", "L", "XL", "2XL"],
       maxQty: 10
     }
   },

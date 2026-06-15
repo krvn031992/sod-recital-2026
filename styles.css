@@ -193,7 +193,10 @@ a { color: inherit; }
 .addon__price { color: var(--gold); font-weight: 700; font-size: .9rem; }
 .addon__note { margin: .4rem 0 0 1.8rem; font-size: .85rem; color: var(--text-soft); }
 .addon__body { margin-top: 1rem; }
-.addon__img { display: block; width: 100%; max-width: 260px; border-radius: var(--radius-sm); border: 1px solid var(--line); margin-bottom: 1rem; }
+.addon__img { display: block; width: 100%; max-width: 300px; border-radius: var(--radius-sm); border: 1px solid var(--line); margin-bottom: 1rem; }
+.addon__sizechart { margin: 1rem 0 0; }
+.addon__sizechart figcaption { font-size: .8rem; color: var(--text-soft); margin-bottom: .4rem; }
+.addon__sizechart img { display: block; width: 100%; max-width: 540px; border-radius: var(--radius-sm); border: 1px solid var(--line); }
 .addon__gallery { display: flex; gap: .7rem; flex-wrap: wrap; margin-bottom: 1rem; }
 .thumb { margin: 0; width: 108px; }
 .thumb img { width: 108px; height: 108px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--line); display: block; }
