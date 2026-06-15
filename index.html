@@ -186,32 +186,6 @@
             </div>
           </div>
 
-          <!-- Flowers -->
-          <div class="addon" data-addon="flowers" hidden>
-            <label class="addon__head">
-              <input type="checkbox" data-addon-toggle="flowers" />
-              <span class="addon__title" data-addon-label="flowers">Flowers</span>
-            </label>
-            <p class="addon__note" data-addon-note="flowers"></p>
-            <div class="addon__body" data-addon-body="flowers" hidden>
-              <div class="addon__gallery" data-addon-gallery="flowers"></div>
-              <div class="grid2">
-                <label class="field">
-                  <span>Choose a design</span>
-                  <select name="flowersOption" data-addon-options="flowers"></select>
-                </label>
-                <label class="field">
-                  <span>Quantity</span>
-                  <select name="flowersQty" data-addon-qty="flowers"></select>
-                </label>
-                <label class="field grid2__full">
-                  <span>Deliver to (dancer) — optional</span>
-                  <input name="flowersDancer" placeholder="Dancer's name" />
-                </label>
-              </div>
-            </div>
-          </div>
-
           <!-- T-Shirt -->
           <div class="addon" data-addon="shirt" hidden>
             <label class="addon__head">
@@ -220,8 +194,12 @@
               <span class="addon__price" data-addon-price="shirt"></span>
             </label>
             <p class="addon__note" data-addon-note="shirt"></p>
+            <img class="addon__img" data-addon-image="shirt" alt="Event T-Shirt" hidden />
+            <figure class="addon__sizechart" data-addon-sizechart="shirt" hidden>
+              <figcaption>Size chart — measurements in inches</figcaption>
+              <img alt="T-shirt size chart" />
+            </figure>
             <div class="addon__body" data-addon-body="shirt" hidden>
-              <img class="addon__img" data-addon-image="shirt" alt="Event T-Shirt" hidden />
               <div class="grid2">
                 <label class="field">
                   <span>Size</span>
@@ -232,10 +210,6 @@
                   <select name="shirtQty" data-addon-qty="shirt"></select>
                 </label>
               </div>
-              <figure class="addon__sizechart" data-addon-sizechart="shirt" hidden>
-                <figcaption>Size chart (measurements in inches)</figcaption>
-                <img alt="T-shirt size chart" />
-              </figure>
             </div>
           </div>
         </fieldset>
