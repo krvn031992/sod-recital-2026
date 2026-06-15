@@ -76,7 +76,8 @@ window.SOD_CONFIG = {
       note: "Official Fantasy 2026 souvenir shirt — see the size chart below.",
       image: "assets/shirt.png",
       sizeChart: "assets/shirt-sizes.png",
-      sizes: ["Kids 12", "Kids 14", "Kids 16", "Kids 18", "S", "M", "L", "XL", "2XL"],
+      sizes: ["Kids Size 12", "Kids Size 14", "Kids Size 16", "Kids Size 18",
+              "Small Adult", "Medium Adult", "Large Adult", "Extra-Large Adult", "2X-Large Adult"],
       maxQty: 10,
       orderUntil: "2026-06-23"    // shirt orders close after this date (YYYY-MM-DD)
     }
