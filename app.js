@@ -158,10 +158,13 @@
     selectedSeats = [];
     seatPairs.forEach(function (p, i) {
       var status = $('[data-seat-status="' + i + '"]');
-      var row = String(p.row || "").trim();
-      var num = String(p.num || "").trim();
+      // Row = letters only; Seat # = digits only (prevents malformed labels)
+      var row = String(p.row || "").toUpperCase().replace(/[^A-Z]/g, "");
+      var num = String(p.num || "").replace(/[^0-9]/g, "");
+      var rEl = $('[data-seat-row="' + i + '"]'); if (rEl && rEl.value !== row) rEl.value = row;
+      var nEl = $('[data-seat-num="' + i + '"]'); if (nEl && nEl.value !== num) nEl.value = num;
       if (!row && !num) { setStatus(status, "", ""); return; }
-      var label = (row + num).toUpperCase().replace(/\s+/g, "");
+      var label = row + num;
       var norm = normSeat(label);
       if (!row || !num) { setStatus(status, "incomplete", "wait"); return; }
       if (taken[norm]) { setStatus(status, "✕ taken", "bad"); return; }
