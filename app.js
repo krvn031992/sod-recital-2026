@@ -331,6 +331,18 @@
       setText('[data-addon-price="shirt"]', "+" + peso(a.shirt.price) + " each");
       fillSelect('[data-addon-sizes="shirt"]', (a.shirt.sizes || []).map(function (s) { return { value: s, label: s }; }));
       fillSelect('[data-addon-qty="shirt"]', range1(a.shirt.maxQty || 10));
+      // Order deadline
+      var open = isOpenUntil(a.shirt.orderUntil);
+      var cb = $('[data-addon-toggle="shirt"]');
+      var body = $('[data-addon-body="shirt"]');
+      if (!open) {
+        if (cb) { cb.checked = false; cb.disabled = true; }
+        if (body) body.hidden = true;
+        setText('[data-addon-note="shirt"]', "🚫 T-shirt ordering closed (deadline was " + prettyDate(a.shirt.orderUntil) + ").");
+      } else {
+        if (cb) cb.disabled = false;
+        setText('[data-addon-note="shirt"]', (a.shirt.note || "") + (a.shirt.orderUntil ? " Order until " + prettyDate(a.shirt.orderUntil) + "." : ""));
+      }
       var simg = $('[data-addon-image="shirt"]');
       if (simg && a.shirt.image) { simg.onerror = function () { simg.hidden = true; }; simg.src = a.shirt.image; simg.hidden = false; }
       var sc = $('[data-addon-sizechart="shirt"]');
@@ -374,6 +386,8 @@
   function range1(n) {
     var out = []; for (var i = 1; i <= n; i++) out.push({ value: i, label: String(i) }); return out;
   }
+  function isOpenUntil(d) { if (!d) return true; var end = new Date(d + "T23:59:59"); return isNaN(end) ? true : (new Date() <= end); }
+  function prettyDate(s) { var d = new Date(s + "T00:00:00"); return isNaN(d) ? s : d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }); }
 
   function computeAddons() {
     var a = CFG.addons || {};
@@ -407,7 +421,7 @@
         total += famt;
       }
     }
-    if (a.shirt && a.shirt.enabled && on("shirt")) {
+    if (a.shirt && a.shirt.enabled && isOpenUntil(a.shirt.orderUntil) && on("shirt")) {
       var shq = Number(form.shirtQty.value || 1);
       var shamt = a.shirt.price * shq;
       items.push({

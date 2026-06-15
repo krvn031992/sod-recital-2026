@@ -77,7 +77,8 @@ window.SOD_CONFIG = {
       image: "assets/shirt.png",
       sizeChart: "assets/shirt-sizes.png",
       sizes: ["Kids 12", "Kids 14", "Kids 16", "Kids 18", "S", "M", "L", "XL", "2XL"],
-      maxQty: 10
+      maxQty: 10,
+      orderUntil: "2026-06-23"    // shirt orders close after this date (YYYY-MM-DD)
     }
   },
 
