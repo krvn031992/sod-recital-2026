@@ -178,7 +178,13 @@
       body: JSON.stringify({ type: "updateStatus", key: state.key, orderId: orderId, status: status })
     })
       .then(function (r) { return r.json(); })
-      .then(function (res) { done(res && res.ok); })
+      .then(function (res) {
+        done(res && res.ok);
+        if (res && res.ok && status === "Confirmed") {
+          if (res.emailSent) alert("✓ Confirmed — confirmation email sent to " + (row ? row.email : "the buyer") + ".");
+          else alert("Status set to Confirmed, but the email did NOT send.\nReason: " + (res.emailError || "unknown") + "\n(Likely the deployment needs a New version.)");
+        }
+      })
       .catch(function () { done(false); });
   }
 

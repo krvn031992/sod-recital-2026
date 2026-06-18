@@ -296,10 +296,12 @@ function updateStatus_(ss, orderId, status) {
     if (String(ids[i][0]) === String(orderId)) {
       var prev = String(sh.getRange(i + 1, STATUS_COL).getValue());
       sh.getRange(i + 1, STATUS_COL).setValue(status);
+      var emailErr = "";
       if (status === "Confirmed" && prev !== "Confirmed") {
-        sendConfirmedEmail_(sh.getRange(i + 1, 1, 1, STATUS_COL).getValues()[0]);
+        emailErr = sendConfirmedEmail_(sh.getRange(i + 1, 1, 1, STATUS_COL).getValues()[0]);
       }
-      return { ok: true, orderId: orderId, status: status };
+      return { ok: true, orderId: orderId, status: status,
+               emailSent: (status === "Confirmed" ? !emailErr : null), emailError: emailErr || "" };
     }
   }
   return { ok: false, error: "Order not found." };
