@@ -47,7 +47,7 @@ var SENDER_NAME  = "State of Dance Studio";
 
 /* Bumped whenever the script changes — lets us confirm the DEPLOYED version
    is current (visible in the config response). */
-var CODE_VERSION = "2026-06-19-confirm-email-v6";
+var CODE_VERSION = "2026-06-19-backlog-v7";
 
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
@@ -338,8 +338,36 @@ function sendConfirmedEmail_(r) {
     var from = senderFrom_();
     if (from) opts.from = from;
     GmailApp.sendEmail(email, subject, body, opts);
+    markConfirmedEmailed_(orderId);
     return "";
   } catch (err) { Logger.log("Confirmed email failed: " + err); return String(err); }
+}
+
+/* Tracks which orders already got a "confirmed" email (avoids duplicates). */
+function markConfirmedEmailed_(orderId) {
+  if (!orderId) return;
+  var props = PropertiesService.getScriptProperties();
+  var list = JSON.parse(props.getProperty("confirmedEmailed") || "[]");
+  if (list.indexOf(orderId) === -1) { list.push(orderId); props.setProperty("confirmedEmailed", JSON.stringify(list)); }
+}
+
+/* RUN ONCE from the editor: emails every already-Confirmed buyer who hasn't
+   received a confirmation email yet. Safe to re-run (skips ones already sent). */
+function emailConfirmedBacklog() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var data = ss.getSheetByName(SHEETS.REG).getDataRange().getValues();
+  var already = JSON.parse(PropertiesService.getScriptProperties().getProperty("confirmedEmailed") || "[]");
+  var sentSet = {}; already.forEach(function (id) { sentSet[id] = true; });
+  var sent = 0, skipped = 0, failed = 0;
+  for (var i = 1; i < data.length; i++) {
+    var r = data[i], orderId = r[0], status = String(r[18] || "");
+    if (status !== "Confirmed") continue;
+    if (sentSet[orderId] || !r[6]) { skipped++; continue; }
+    var err = sendConfirmedEmail_(r);   // this marks it on success
+    if (err) { failed++; Logger.log("Backlog failed " + orderId + ": " + err); }
+    else { sent++; Utilities.sleep(400); }
+  }
+  Logger.log("Backlog done — sent: " + sent + ", skipped: " + skipped + ", failed: " + failed);
 }
 
 /* Fires when the Status cell is edited in the Sheet. Sends the confirmed
