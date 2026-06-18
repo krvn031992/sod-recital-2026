@@ -45,6 +45,10 @@ var SITE_URL = "https://krvn031992.github.io/sod-recital-2026";
 var SENDER_EMAIL = "kervin@stateofdance.co";
 var SENDER_NAME  = "State of Dance Studio";
 
+/* Bumped whenever the script changes — lets us confirm the DEPLOYED version
+   is current (visible in the config response). */
+var CODE_VERSION = "2026-06-19-confirm-email-v6";
+
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -173,6 +177,7 @@ function readConfig_() {
   // Remaining seats per tier (allocation − confirmed/pending qty sold)
   out.remaining = remainingByTier_(ss, out.tiers);
   out.takenVipSeats = takenSeats_(ss);
+  out.codeVersion = CODE_VERSION;
   return out;
 }
 
@@ -437,6 +442,16 @@ function testEmail() {
     "If you received this, confirmation emails are working. Sender resolves to: " + (from || to),
     opts);
   Logger.log("Test email sent to " + to + " (from " + (from || to) + ")");
+}
+
+/* Sends a sample "Payment confirmed" email to you, using the same code the
+   dashboard/Sheet use. Run from the editor to prove the confirm-email works. */
+function testConfirmEmail() {
+  var to = Session.getActiveUser().getEmail();
+  var sample = ["SOD-TEST-XXXX", new Date(), "Test Student", "Jazz", "BGC", "Test Buyer",
+    to, "0917 000 0000", "VIP", "A1, A2", 2, 2595, 5190, "1 × Shout-out", 200, 5390, "gcash", "", "Confirmed"];
+  var err = sendConfirmedEmail_(sample);
+  Logger.log(err ? ("CONFIRM EMAIL FAILED: " + err) : ("CONFIRM EMAIL OK — sent to " + to));
 }
 
 function makeOrderId_() {
