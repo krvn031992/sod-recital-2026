@@ -7,6 +7,7 @@
   "use strict";
   var CFG = window.SOD_CONFIG || {};
   var card = document.querySelector("[data-card]");
+  var KEY_STORE = "sod_admin_key";
   var peso = function (n) { return "₱" + Number(n || 0).toLocaleString("en-PH"); };
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -40,11 +41,16 @@
 
   function msg(t) { card.innerHTML = '<p class="verify__msg">' + esc(t) + "</p>"; }
 
+  function fmt(t) { var d = new Date(t); return isNaN(d) ? String(t) : d.toLocaleString("en-PH", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" }); }
+
   function render(o, preview) {
     var st = String(o.status || "Pending");
     var cls = { Confirmed: "confirmed", Pending: "pending", Rejected: "rejected", Cancelled: "cancelled" }[st] || "unknown";
     var label = st === "Confirmed" ? "✓ CONFIRMED" : st === "Pending" ? "⏳ PENDING PAYMENT" : st.toUpperCase();
     function row(k, v, big) { return '<div class="verify__row"><span>' + esc(k) + '</span><b' + (big ? ' class="big"' : "") + ">" + esc(v) + "</b></div>"; }
+    var checkinHtml = o.checkedIn
+      ? '<div class="verify__used">⚠️ ALREADY USED<br><small>Checked in ' + esc(fmt(o.checkedIn)) + "</small></div>"
+      : '<button class="btn btn--gold btn--block" data-checkin>✓ Check In (Mark as Used)</button>';
     card.innerHTML =
       '<div class="verify__status vs--' + cls + '">' + esc(label) + "</div>" +
       '<div class="verify__body">' +
@@ -56,7 +62,35 @@
         (o.addons ? row("Add-ons", o.addons) : "") +
         row("Payment", String(o.payMethod || "").toUpperCase()) +
         row("Total", peso(o.total), true) +
+        '<div class="verify__checkin">' + checkinHtml + "</div>" +
         (preview ? '<p class="verify__msg">Preview mode — connect the backend to see live data.</p>' : "") +
       "</div>";
+    var btn = card.querySelector("[data-checkin]");
+    if (btn) btn.addEventListener("click", function () { doCheckin(o); });
+  }
+
+  function doCheckin(o) {
+    if (!CFG.apiUrl) { alert("Preview mode — no backend connected."); return; }
+    var key = sessionStorage.getItem(KEY_STORE);
+    if (!key) { key = prompt("Enter staff password to check in this ticket:"); if (!key) return; sessionStorage.setItem(KEY_STORE, key); }
+    var btn = card.querySelector("[data-checkin]");
+    if (btn) { btn.disabled = true; btn.textContent = "Checking in…"; }
+    fetch(CFG.apiUrl, {
+      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({ type: "checkin", key: key, orderId: o.orderId || id })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res || res.ok === false) {
+          if (res && res.error === "Unauthorized") { sessionStorage.removeItem(KEY_STORE); alert("Wrong password — try again."); }
+          else alert((res && res.error) || "Check-in failed.");
+          if (btn) { btn.disabled = false; btn.textContent = "✓ Check In (Mark as Used)"; }
+          return;
+        }
+        o.checkedIn = res.at;
+        render(o, false);
+        alert(res.already ? "⚠️ This ticket was ALREADY used at " + fmt(res.at) + "." : "✓ Checked in successfully.");
+      })
+      .catch(function () { if (btn) { btn.disabled = false; btn.textContent = "✓ Check In (Mark as Used)"; } alert("Network error."); });
   }
 })();

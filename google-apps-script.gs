@@ -47,7 +47,7 @@ var SENDER_NAME  = "State of Dance Studio";
 
 /* Bumped whenever the script changes — lets us confirm the DEPLOYED version
    is current (visible in the config response). */
-var CODE_VERSION = "2026-06-19-backlog-v7";
+var CODE_VERSION = "2026-06-19-checkin-v8";
 
 /* ---------- One-time setup: build the tabs with defaults ---------- */
 function setup() {
@@ -193,11 +193,31 @@ function verifyOrder_(id) {
         orderId: r[0], studentName: r[2], studentClass: r[3], studentBranch: r[4],
         buyerName: r[5], email: r[6], phone: r[7], tier: r[8], seats: r[9],
         qty: Number(r[10]), addons: r[13], total: Number(r[15]),
-        payMethod: r[16], status: r[18] || "Pending"
+        payMethod: r[16], status: r[18] || "Pending",
+        checkedIn: getCheckins_()[String(r[0])] || ""
       } };
     }
   }
   return { ok: false, error: "Not found" };
+}
+
+function getCheckins_() {
+  return JSON.parse(PropertiesService.getScriptProperties().getProperty("checkins") || "{}");
+}
+
+/* Marks a ticket as used at the gate. Returns already:true if it was
+   already checked in (re-scan), with the original time. */
+function checkIn_(orderId) {
+  if (!orderId) return { ok: false, error: "No ticket ID." };
+  var found = verifyOrder_(orderId);
+  if (!found.ok) return { ok: false, error: "Ticket not found." };
+  var props = PropertiesService.getScriptProperties();
+  var map = JSON.parse(props.getProperty("checkins") || "{}");
+  if (map[orderId]) return { ok: true, already: true, at: map[orderId], order: found.order };
+  var now = new Date().toISOString();
+  map[orderId] = now;
+  props.setProperty("checkins", JSON.stringify(map));
+  return { ok: true, already: false, at: now, order: found.order };
 }
 
 function takenSeats_(ss) {
@@ -242,6 +262,12 @@ function doPost(e) {
     if (data.type === "updateStatus") {
       if (!isAdmin_(data.key)) return json_({ ok: false, error: "Unauthorized" });
       return json_(updateStatus_(ss, data.orderId, data.status));
+    }
+
+    // Venue check-in: mark a ticket as used
+    if (data.type === "checkin") {
+      if (!isAdmin_(data.key)) return json_({ ok: false, error: "Unauthorized" });
+      return json_(checkIn_(data.orderId));
     }
 
     // Re-check sales open + capacity server-side (don't trust the client)
